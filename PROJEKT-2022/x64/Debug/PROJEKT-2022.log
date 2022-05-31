@@ -1,0 +1,11 @@
+﻿  Game.cpp
+  Instruction.cpp
+  Settings.cpp
+  Źródło.cpp
+C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\PROJEKT-2022\Źródło.cpp(177,25): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\PROJEKT-2022\Źródło.cpp(276,10): warning C4101: "start": lokalna zmienna, do której nie istnieje odwołanie
+C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\PROJEKT-2022\Źródło.cpp(276,17): warning C4101: "stop": lokalna zmienna, do której nie istnieje odwołanie
+C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\PROJEKT-2022\Źródło.cpp(314,9): warning C4101: "game": lokalna zmienna, do której nie istnieje odwołanie
+C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\PROJEKT-2022\Źródło.cpp(316,9): warning C4101: "game": lokalna zmienna, do której nie istnieje odwołanie
+  Generowanie kodu...
+  PROJEKT-2022.vcxproj -> C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\x64\Debug\PROJEKT-2022.exe
