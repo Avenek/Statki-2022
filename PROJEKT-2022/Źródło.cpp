@@ -80,16 +80,16 @@ void load_settings(bool & welcome_screen, bool & music, bool & effects)
 	}
 
 }
-void play_music(string name)
-{							//Wybiera odpowiedni¹ muzykê dla zadanego argumentu.
-	if(name=="game") PlaySound(L"game", NULL, SND_ASYNC | SND_LOOP);
-		else if (name == "loseC") PlaySound(L"loseC", NULL, SND_ASYNC);
-		else if (name == "empty") PlaySound(L"empty", NULL, SND_ASYNC);
-		else if (name == "hit") PlaySound(L"hit", NULL, SND_ASYNC);
-		else if (name == "mute") PlaySound(L"mute", NULL, SND_ASYNC);
-		else if (name == "winC") PlaySound(L"winC", NULL, SND_ASYNC);
-		else if (name == "winP") PlaySound(L"winP", NULL, SND_ASYNC);
-		else if (name == "sunk") PlaySound(L"sunk", NULL, SND_ASYNC);
+void play_music(string name) //Wybiera odpowiedni¹ muzykê dla zadanego argumentu.
+{
+	if(name=="game") PlaySound(L"music/game", NULL, SND_ASYNC | SND_LOOP);
+	else if (name == "loseC") PlaySound(L"music/loseC", NULL, SND_ASYNC);
+	else if (name == "empty") PlaySound(L"music/empty", NULL, SND_ASYNC);
+	else if (name == "hit") PlaySound(L"music/hit", NULL, SND_ASYNC);
+	else if (name == "mute") PlaySound(L"music/mute", NULL, SND_ASYNC);
+	else if (name == "winC") PlaySound(L"music/winC", NULL, SND_ASYNC);
+	else if (name == "winP") PlaySound(L"music/winP", NULL, SND_ASYNC);
+	else if (name == "sunk") PlaySound(L"music/sunk", NULL, SND_ASYNC);
 }
 void show_welcome()
 {
