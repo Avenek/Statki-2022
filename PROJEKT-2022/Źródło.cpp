@@ -41,38 +41,31 @@ void load_settings(bool & welcome_screen, bool & music, bool & effects)
 	{
 		while (getline(plik, line))
 		{
-
+			// Pobiera dane z pliku i ustawia ustawienia do stanu z poprzedniego
+			// 1 - true, 0 - false
+			//Na wypadek manipulacji plikiem, ustawia wartoœæ true.
+			check = atoi(line.c_str());
 			if (nr_line == 1)
 			{
-				check = atoi(line.c_str());
-				if (check == 1)
-					welcome_screen = true;
-				else if (check == 0)							// Pobiera dane z pliku i ustawia ustawienia do stanu z poprzedniego
-					welcome_screen = false;						// 1 - true, 0 - false
+				if (check == 0)
+					welcome_screen = false;
 				else
-					welcome_screen = true;						//Na wypadek manipulacji plikiem, ustawia wartoœæ true.
+					welcome_screen = true;
 			}
 			else if (nr_line == 2)
 			{
-				check = atoi(line.c_str());
-				if (check == 1)
-					music = true;
-				else if (check == 0)
+				if (check == 0)
 					music = false;
 				else
 					music = true;
 			}
 			else if (nr_line == 3)
 			{
-				check = atoi(line.c_str());
-				if (check == 1)
-					effects = true;
-				else if (check == 0)
+				if (check == 0)
 					effects = false;
 				else
-					effects= true;
+					effects = true;
 			}
-
 			nr_line++;
 		}
 
