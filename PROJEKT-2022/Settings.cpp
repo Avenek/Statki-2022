@@ -1,5 +1,6 @@
 #include "Settings.h"
 #include "Game.h"
+#include "CursorUtils.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -14,7 +15,7 @@ Settings::Settings(int c)
 {
     choose = c;
 }
-void Settings::show(void(*frame)(string, bool, int), void(*setCursor)(int, int), void(*moving)(int&, bool&, int n), void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
+void Settings::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n), void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
 {
 	HANDLE hOut;
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -27,7 +28,7 @@ void Settings::show(void(*frame)(string, bool, int), void(*setCursor)(int, int),
 		end = false;
 		while (end == false)
 		{
-			setCursor(1, 1);
+			CursorUtils::setCursor(1, 1);
 			cout << endl << endl;
 			welcome_screen == true ? option = "Wylacz " : option = "Wlacz ";	
 			option += "ekran powitalny";
@@ -71,6 +72,59 @@ void Settings::show(void(*frame)(string, bool, int), void(*setCursor)(int, int),
 		music == true ? plik << 1 << endl : plik << 0 << endl;
 		effects == true ? plik << 1 << endl : plik << 0 << endl;
 		plik.close();
+	}	
+}
+
+void Settings::load_settings(bool& welcome_screen, bool& music, bool& effects)
+{
+	fstream plik;
+	int nr_line = 1;
+	int check{};
+	string line{};
+
+	plik.open("ustawienia.txt", ios::in);
+	if (plik.good() == false)
+	{
+		plik.close();
+		plik.open("ustawienia.txt", ios::out);
+		plik << "1" << endl << "1" << endl << "1";                   // W przypadku problemów z otwarciem pliku
+		plik.close();                                                // tworzy siê nowy plik i ustawienia domyœlnie s¹ w³¹czone.
+		welcome_screen = true;
+		music = true;
+		effects = true;
 	}
-	
+	else
+	{
+		while (getline(plik, line))
+		{
+			// Pobiera dane z pliku i ustawia ustawienia do stanu z poprzedniego
+			// 1 - true, 0 - false
+			//Na wypadek manipulacji plikiem, ustawia wartoœæ true.
+			check = atoi(line.c_str());
+			if (nr_line == 1)
+			{
+				if (check == 0)
+					welcome_screen = false;
+				else
+					welcome_screen = true;
+			}
+			else if (nr_line == 2)
+			{
+				if (check == 0)
+					music = false;
+				else
+					music = true;
+			}
+			else if (nr_line == 3)
+			{
+				if (check == 0)
+					effects = false;
+				else
+					effects = true;
+			}
+			nr_line++;
+		}
+
+		plik.close();
+	}
 }

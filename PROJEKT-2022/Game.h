@@ -11,8 +11,6 @@ using namespace std;
 class Game
 {
 	bool versus_player;
-	string player_name;
-	string second_player_name;
 
 public:
 	friend class Ship;

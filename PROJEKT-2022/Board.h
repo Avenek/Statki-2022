@@ -14,7 +14,8 @@ class Board
 protected:
 	int board[10][10];
 	Ship ship_board[10][10];
-	int player; // 1 = pierwszy gracz, 2 = drugi gracz 
+	int player;
+	string player_name;
 public:
 	void load_names();
 };
