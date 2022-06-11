@@ -11,68 +11,12 @@
 #include "Game.h"
 #include "Instruction.h"
 #include "Settings.h"
+#include "CursorUtils.h"
+
 using namespace std;
-void setCursor(int x, int y)
-{
-	COORD c;
-	c.X = x - 1;
-	c.Y = y - 1;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
-}
-void load_settings(bool & welcome_screen, bool & music, bool & effects)
-{
-	fstream plik;
-	int nr_line = 1;
-	int check{};
-	string line{};
 
-	plik.open("ustawienia.txt", ios::in);
-	if (plik.good() == false)
-	{
-		plik.close();
-		plik.open("ustawienia.txt", ios::out);
-		plik << "1" << endl << "1" << endl << "1";                   // W przypadku problemów z otwarciem pliku
-		plik.close();                                                // tworzy siê nowy plik i ustawienia domyœlnie s¹ w³¹czone.
-		welcome_screen = true;
-		music = true;
-		effects = true;
-	}
-	else
-	{
-		while (getline(plik, line))
-		{
-			// Pobiera dane z pliku i ustawia ustawienia do stanu z poprzedniego
-			// 1 - true, 0 - false
-			//Na wypadek manipulacji plikiem, ustawia wartoœæ true.
-			check = atoi(line.c_str());
-			if (nr_line == 1)
-			{
-				if (check == 0)
-					welcome_screen = false;
-				else
-					welcome_screen = true;
-			}
-			else if (nr_line == 2)
-			{
-				if (check == 0)
-					music = false;
-				else
-					music = true;
-			}
-			else if (nr_line == 3)
-			{
-				if (check == 0)
-					effects = false;
-				else
-					effects = true;
-			}
-			nr_line++;
-		}
+Settings settings(0);
 
-		plik.close();						
-	}
-
-}
 void play_music(string name) //Wybiera odpowiedni¹ muzykê dla zadanego argumentu.
 {
 	if(name=="game") PlaySound(L"music/game", NULL, SND_ASYNC | SND_LOOP);
@@ -89,7 +33,7 @@ void show_welcome()
 	HANDLE hOut;
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hOut, FOREGROUND_RED);
-	setCursor(26, 1);																					// Ekran startowy      
+	CursorUtils::setCursor(26, 1);																					// Ekran startowy      
 	cout << "Statek w porcie jest bezpieczny, ale nie po to buduje sie statki..." << endl;
 	Sleep(5000);
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -116,7 +60,7 @@ void frame(string napis, bool color=false, int n=0)
 	unsigned char PG = 187;
 	unsigned char PD = 188;
 	int dl = napis.length();
-	setCursor(42,1+6*n);
+	CursorUtils::setCursor(42,1+6*n);
 	if (color == false)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	else
@@ -125,11 +69,11 @@ void frame(string napis, bool color=false, int n=0)
 	for (int a = 0; a < 30; a++)
 		cout << poziom;
 	cout << PG << endl;
-	setCursor(42, 2 + 6 * n);
+	CursorUtils::setCursor(42, 2 + 6 * n);
 	cout << pion;
-	setCursor(73, 2 + 6 * n);
+	CursorUtils::setCursor(73, 2 + 6 * n);
 	cout << pion << endl;
-	setCursor(42, 3 + 6 * n);
+	CursorUtils::setCursor(42, 3 + 6 * n);
 	if (color == false)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	else
@@ -139,47 +83,28 @@ void frame(string napis, bool color=false, int n=0)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED | FOREGROUND_GREEN);
 	else
 		SetConsoleTextAttribute(hOut, FOREGROUND_BLUE);
-	setCursor(43 + (31 - dl) / 2 , 3 + 6 * n);
+	CursorUtils::setCursor(43 + (31 - dl) / 2 , 3 + 6 * n);
 	cout << napis;
-	setCursor(42 + (30 - dl) / 2 , 3 + 6 * n);
+	CursorUtils::setCursor(42 + (30 - dl) / 2 , 3 + 6 * n);
 	if (color == false)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	else
 		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
-	setCursor(73, 3 + 6 * n);
+	CursorUtils::setCursor(73, 3 + 6 * n);
 	cout << pion << endl;
-	setCursor(42,4 + 6 * n);
+	CursorUtils::setCursor(42,4 + 6 * n);
 	cout << pion;
-	setCursor(73, 4 + 6 * n);
+	CursorUtils::setCursor(73, 4 + 6 * n);
 	cout << pion << endl;
-	setCursor(42, 5 + 6 * n);
+	CursorUtils::setCursor(42, 5 + 6 * n);
 	cout << LD;
 	for (int a = 0; a < 30; a++)
 		cout << poziom;
 	cout << PD << endl;
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 
+}
 
-}
-void HideCursor()
-{
-	::HANDLE hConsoleOut = ::GetStdHandle(STD_OUTPUT_HANDLE);
-	::CONSOLE_CURSOR_INFO hCCI;
-	::GetConsoleCursorInfo(hConsoleOut, &hCCI);
-	hCCI.bVisible = FALSE;
-	::SetConsoleCursorInfo(hConsoleOut, &hCCI);
-}
-void ShowCursor()
-{
-	::HANDLE hConsoleOut = ::GetStdHandle(STD_OUTPUT_HANDLE);
-	::CONSOLE_CURSOR_INFO hCCI;
-	::GetConsoleCursorInfo(hConsoleOut, &hCCI);
-	if (hCCI.bVisible != TRUE)
-	{
-		hCCI.bVisible = TRUE;
-		::SetConsoleCursorInfo(hConsoleOut, &hCCI);
-	}
-}
 void moving(int &choose, bool &end, int number)
 {
 	unsigned char sign = 224;
@@ -205,7 +130,7 @@ void moving(int &choose, bool &end, int number)
 
 int main()
 {
-	HideCursor(); // Schowanie kursora //
+	CursorUtils::hideCursor();
 	// ZMIENNE USTAWIENIA, POBOROWE PLIKU, KOLORU I PRZYCISKU//
 	bool welcome_screen = true;
 	bool music = true;
@@ -239,7 +164,7 @@ int main()
 
 	
 	
-	load_settings(welcome_screen, music, effects);			//wczytanie danych z pliku
+	settings.load_settings(welcome_screen, music, effects);			//wczytanie danych z pliku
 
 	if (music == true)
 		play_music("game");
@@ -250,7 +175,7 @@ int main()
 	
 	while (menu.if_menu == true)
 	{
-		int option = menu.show(&frame, &setCursor, &moving);	// Pokazanie ekranu menu g³ównego wraz z wyborem
+		int option = menu.show(&frame, &CursorUtils::setCursor, &moving);	// Pokazanie ekranu menu g³ównego wraz z wyborem
 		if (option == 0)
 			Game game;											// Gra z przeciwnikiem
 		else if (option == 1)
@@ -258,16 +183,15 @@ int main()
 		else if (option == 2)
 		{
 			Instruction instruction(0);
-			instruction.show(&frame, &setCursor, &moving);    // Instrukcja
+			instruction.show(&frame, &CursorUtils::setCursor, &moving);    // Instrukcja
 		}
 		else if (option == 3)
 		{
-			Settings settings(0);
-			settings.show(&frame, &setCursor, &moving, &play_music, welcome_screen, music, effects);    // Instrukcja
+			settings.show(&frame, &CursorUtils::setCursor, &moving, &play_music, welcome_screen, music, effects);    // Instrukcja
 		}
 		else if (option == 4)
 		{
-			menu.info(&frame, &setCursor, &moving);			 // O autorze
+			menu.info(&frame, &CursorUtils::setCursor, &moving);			 // O autorze
 		}
 	}
 

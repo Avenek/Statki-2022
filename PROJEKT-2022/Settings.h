@@ -14,4 +14,5 @@ class Settings
 public:
     Settings(int c);
     void show(void(*frame)(string, bool, int), void(*setCursor)(int, int), void(*moving)(int&, bool&, int n), void(*play_music)(string), bool&, bool&, bool&);
+    void load_settings(bool& welcome_screen, bool& music, bool& effects);
 };

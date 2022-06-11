@@ -71,6 +71,59 @@ void Settings::show(void(*frame)(string, bool, int), void(*setCursor)(int, int),
 		music == true ? plik << 1 << endl : plik << 0 << endl;
 		effects == true ? plik << 1 << endl : plik << 0 << endl;
 		plik.close();
+	}	
+}
+
+void Settings::load_settings(bool& welcome_screen, bool& music, bool& effects)
+{
+	fstream plik;
+	int nr_line = 1;
+	int check{};
+	string line{};
+
+	plik.open("ustawienia.txt", ios::in);
+	if (plik.good() == false)
+	{
+		plik.close();
+		plik.open("ustawienia.txt", ios::out);
+		plik << "1" << endl << "1" << endl << "1";                   // W przypadku problemów z otwarciem pliku
+		plik.close();                                                // tworzy siê nowy plik i ustawienia domyœlnie s¹ w³¹czone.
+		welcome_screen = true;
+		music = true;
+		effects = true;
 	}
-	
+	else
+	{
+		while (getline(plik, line))
+		{
+			// Pobiera dane z pliku i ustawia ustawienia do stanu z poprzedniego
+			// 1 - true, 0 - false
+			//Na wypadek manipulacji plikiem, ustawia wartoœæ true.
+			check = atoi(line.c_str());
+			if (nr_line == 1)
+			{
+				if (check == 0)
+					welcome_screen = false;
+				else
+					welcome_screen = true;
+			}
+			else if (nr_line == 2)
+			{
+				if (check == 0)
+					music = false;
+				else
+					music = true;
+			}
+			else if (nr_line == 3)
+			{
+				if (check == 0)
+					effects = false;
+				else
+					effects = true;
+			}
+			nr_line++;
+		}
+
+		plik.close();
+	}
 }
