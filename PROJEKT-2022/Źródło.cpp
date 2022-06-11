@@ -175,7 +175,7 @@ int main()
 	
 	while (menu.if_menu == true)
 	{
-		int option = menu.show(&frame, &CursorUtils::setCursor, &moving);	// Pokazanie ekranu menu g³ównego wraz z wyborem
+		int option = menu.show(&frame, &moving);	// Pokazanie ekranu menu g³ównego wraz z wyborem
 		if (option == 0)
 			Game game;											// Gra z przeciwnikiem
 		else if (option == 1)
@@ -183,15 +183,15 @@ int main()
 		else if (option == 2)
 		{
 			Instruction instruction(0);
-			instruction.show(&frame, &CursorUtils::setCursor, &moving);    // Instrukcja
+			instruction.show(&frame, &moving);    // Instrukcja
 		}
 		else if (option == 3)
 		{
-			settings.show(&frame, &CursorUtils::setCursor, &moving, &play_music, welcome_screen, music, effects);    // Instrukcja
+			settings.show(&frame, &moving, &play_music, welcome_screen, music, effects);    // Instrukcja
 		}
 		else if (option == 4)
 		{
-			menu.info(&frame, &CursorUtils::setCursor, &moving);			 // O autorze
+			menu.info(&frame, &moving);			 // O autorze
 		}
 	}
 

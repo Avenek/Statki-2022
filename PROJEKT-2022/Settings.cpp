@@ -1,5 +1,6 @@
 #include "Settings.h"
 #include "Game.h"
+#include "CursorUtils.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -14,7 +15,7 @@ Settings::Settings(int c)
 {
     choose = c;
 }
-void Settings::show(void(*frame)(string, bool, int), void(*setCursor)(int, int), void(*moving)(int&, bool&, int n), void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
+void Settings::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n), void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
 {
 	HANDLE hOut;
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -27,7 +28,7 @@ void Settings::show(void(*frame)(string, bool, int), void(*setCursor)(int, int),
 		end = false;
 		while (end == false)
 		{
-			setCursor(1, 1);
+			CursorUtils::setCursor(1, 1);
 			cout << endl << endl;
 			welcome_screen == true ? option = "Wylacz " : option = "Wlacz ";	
 			option += "ekran powitalny";

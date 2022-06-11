@@ -15,8 +15,8 @@ protected:
 public:
 	Menu(int c, bool s);
 	bool if_menu;
-	int show(void(*frame)(string, bool, int), void(*setCursor)(int, int), void(*moving)(int&, bool&, int n));
-	void info(void(*frame)(string, bool, int), void(*setCursor)(int, int), void(*moving)(int&, bool&, int n));
+	int show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n));
+	void info(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n));
 	
 };
 
