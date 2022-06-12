@@ -18,8 +18,7 @@ Menu::Menu(int c, bool s)
 }
 void Menu::info(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n))
 {
-    HANDLE hOut;
-    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     bool end = false;
     while (end == false)
     {
@@ -34,14 +33,11 @@ void Menu::info(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int 
         frame("Menu glowne", true, 1);                                          // Mo¿liwoœæ wyjœcia za pomoc¹ entera
         moving(choose, end, 0);
     }
-
-   
 }
 
 int Menu::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n))
 {
-    HANDLE hOut;
-    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     bool end = false;
     bool color = false;
     while (end == false)

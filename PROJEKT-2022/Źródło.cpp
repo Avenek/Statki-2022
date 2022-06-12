@@ -17,6 +17,11 @@ using namespace std;
 
 Settings settings(0);
 
+void temp_spacje(int ilosc) {
+	for (int a = 0; a < ilosc; a++)
+		cout << " ";
+}
+
 void play_music(string name) //Wybiera odpowiedni¹ muzykê dla zadanego argumentu.
 {
 	if(name=="game") PlaySound(L"music/game", NULL, SND_ASYNC | SND_LOOP);
@@ -163,7 +168,6 @@ int main()
 	unsigned char square = 254;
 
 	
-	
 	settings.load_settings(welcome_screen, music, effects);			//wczytanie danych z pliku
 
 	if (music == true)
@@ -177,9 +181,15 @@ int main()
 	{
 		int option = menu.show(&frame, &moving);	// Pokazanie ekranu menu g³ównego wraz z wyborem
 		if (option == 0)
+		{
 			Game game;											// Gra z przeciwnikiem
+			game.createGame(VERSUS_PLAYER, &frame, &moving);
+		}
 		else if (option == 1)
+		{
 			Game game;											// Gra z komputerem
+			game.createGame(VERSUS_COMPUTER, &frame, &moving);
+		}
 		else if (option == 2)
 		{
 			Instruction instruction(0);
