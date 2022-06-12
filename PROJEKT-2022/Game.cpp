@@ -1,5 +1,6 @@
 #include "Game.h"
-#include "CursorUtils.h"
+#include "utils/CursorUtils.h"
+#include "utils/FrameUtils.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -10,24 +11,24 @@
 
 using namespace std;
 
-void Game::createGame(GameType gameType, void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n)) {
+void Game::createGame(GameType gameType) {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	int choose{};
 	bool color{}, end{};
 	switch (gameType) {
 	case VERSUS_PLAYER:
-		frame("Tryb dla dwoch graczy", false, 0);
+		FrameUtils::createFrame("Tryb dla dwoch graczy", false, 0);
 		aiMode = NONE;
 		break;
 	case VERSUS_COMPUTER:
 		while (end == false) {
 			CursorUtils::setCursor(1, 1);                                                //Wyœwietlenie menu g³ównego, poruszanie siê za pomoc¹ strza³ek, akcept enterem
 			cout << endl << endl;
-			frame("Powrot do menu", choose == 0, 0);
-			frame("Tryb latwy", choose == 1, 1);
-			frame("Tryb normalny", choose == 2, 2);
-			frame("Tryb trudny", choose == 3, 3);
-			moving(choose, end, 3);
+			FrameUtils::createFrame("Powrot do menu", choose == 0, 0);
+			FrameUtils::createFrame("Tryb latwy", choose == 1, 1);
+			FrameUtils::createFrame("Tryb normalny", choose == 2, 2);
+			FrameUtils::createFrame("Tryb trudny", choose == 3, 3);
+			FrameUtils::createMovementListener(choose, end, 3);
 		}
 		//koniec funkcji, powrot do menu
 		if (choose == 0) {
@@ -81,6 +82,6 @@ void Game::createGame(GameType gameType, void(*frame)(string, bool, int), void(*
 	system("cls");
 }
 
-void Game::generateMap(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n)) {
+void Game::generateMap() {
 
 }

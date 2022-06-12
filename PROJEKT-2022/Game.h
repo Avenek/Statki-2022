@@ -19,13 +19,13 @@ enum AiMode {
 
 class Game
 {
-	bool versus_player;
+	bool versusPlayer;
 	string name1, name2;
 	AiMode aiMode;
 
 public:
-	void createGame(GameType, void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n));
-	void generateMap(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n));
+	void createGame(GameType);
+	void generateMap();
 	friend class Ship;
 };
 

@@ -1,6 +1,7 @@
+#include "utils/CursorUtils.h"
+#include "utils/FrameUtils.h"
 #include "Settings.h"
 #include "Game.h"
-#include "CursorUtils.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -15,7 +16,7 @@ Settings::Settings(int c)
 {
     choose = c;
 }
-void Settings::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n), void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
+void Settings::show(void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
 {
 	HANDLE hOut;
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -32,15 +33,15 @@ void Settings::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, 
 			cout << endl << endl;
 			welcome_screen == true ? option = "Wylacz " : option = "Wlacz ";	
 			option += "ekran powitalny";
-			frame(option, choose == 0, 0);
+			FrameUtils::createFrame(option, choose == 0, 0);
 			music == true ? option = "Wylacz " : option = "Wlacz ";
 			option += "muzyke ";
-			frame(option, choose == 1, 1);
+			FrameUtils::createFrame(option, choose == 1, 1);
 			effects == true ? option = "Wylacz " : option = "Wlacz ";		
 			option += "efekty dzwiekowe ";
-			frame(option, choose == 2, 2);
-			frame("Menu glowne", choose == 3, 3);
-			moving(choose, end, 3);
+			FrameUtils::createFrame(option, choose == 2, 2);
+			FrameUtils::createFrame("Menu glowne", choose == 3, 3);
+			FrameUtils::createMovementListener(choose, end, 3);
 		}
 		if (choose == 0)
 		{

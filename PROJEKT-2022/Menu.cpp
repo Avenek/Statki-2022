@@ -1,4 +1,5 @@
-#include "CursorUtils.h"
+#include "utils/CursorUtils.h"
+#include "utils/FrameUtils.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -16,7 +17,7 @@ Menu::Menu(int c, bool s)
     choose = c;
     if_menu = s;
 }
-void Menu::info(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n))
+void Menu::info()
 {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     bool end = false;
@@ -30,12 +31,12 @@ void Menu::info(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int 
         SetConsoleTextAttribute(hOut, FOREGROUND_RED);
         cout << "Copyright 2022 Jakub Machnik. All rights reserved.";
         SetConsoleTextAttribute(hOut, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); 
-        frame("Menu glowne", true, 1);                                          // Mo¿liwoœæ wyjœcia za pomoc¹ entera
-        moving(choose, end, 0);
+        FrameUtils::createFrame("Menu glowne", true, 1);                                          // Mo¿liwoœæ wyjœcia za pomoc¹ entera
+        FrameUtils::createMovementListener(choose, end, 0);
     }
 }
 
-int Menu::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n))
+int Menu::show()
 {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     bool end = false;
@@ -44,12 +45,12 @@ int Menu::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n
     {
         CursorUtils::setCursor(1, 1);                                                //Wyœwietlenie menu g³ównego, poruszanie siê za pomoc¹ strza³ek, akcept enterem
         cout << endl << endl;
-        frame("Tryb dla dwoch graczy", choose == 0, 0);
-        frame("Gra z komputerem", choose == 1, 1);
-        frame("Instrukcja", choose == 2, 2);
-        frame("Ustawienia", choose == 3, 3);
-        frame("O autorze", choose == 4, 4);
-        moving(choose, end, 4);
+        FrameUtils::createFrame("Tryb dla dwoch graczy", choose == 0, 0);
+        FrameUtils::createFrame("Gra z komputerem", choose == 1, 1);
+        FrameUtils::createFrame("Instrukcja", choose == 2, 2);
+        FrameUtils::createFrame("Ustawienia", choose == 3, 3);
+        FrameUtils::createFrame("O autorze", choose == 4, 4);
+        FrameUtils::createMovementListener(choose, end, 4);
     }
     return choose;
 }
