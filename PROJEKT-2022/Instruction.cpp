@@ -1,6 +1,7 @@
 #include "Instruction.h"
 #include "Game.h"
-#include "CursorUtils.h"
+#include "utils/CursorUtils.h"
+#include "utils/FrameUtils.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -13,7 +14,7 @@ Instruction::Instruction(int c)
 {
     choose = c;
 }
-void Instruction::commands(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n))
+void Instruction::commands()
 {
    
 }
@@ -21,7 +22,7 @@ void Instruction::how_to_play()
 {
 
 }
-void Instruction::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n))
+void Instruction::show()
 {
     bool end = false;
     bool color = false;
@@ -29,16 +30,15 @@ void Instruction::show(void(*frame)(string, bool, int), void(*moving)(int&, bool
     {
         CursorUtils::setCursor(1, 1);
         cout << endl << endl;
-        choose == 0 ? color = true : color = false;
-        frame("Instrukcja dotyczaca rozgrywki", color, 0);   // Instrukcja
-        choose == 1 ? color = true : color = false;
-        frame("Komendy - ukladanie statkow", color, 1);     // Wypisanie komend
-        choose == 2 ? color = true : color = false;
-        frame("Menu glowne", color, 2);                     // Powrót do menu g³ównego
-        moving(choose, end, 2);
+        FrameUtils::createFrame("Instrukcja dotyczaca rozgrywki", choose == 0, 0);   // Instrukcja
+        FrameUtils::createFrame("Komendy - ukladanie statkow", choose == 1, 1);     // Wypisanie komend
+        FrameUtils::createFrame("Menu glowne", choose == 2, 2);                     // Powrót do menu g³ównego
+        FrameUtils::createMovementListener(choose, end, 2);
     }
-    if (choose == 0) how_to_play();
-    else if (choose == 1) commands(frame, moving);
+    if (choose == 0)
+        how_to_play();
+    else if (choose == 1)
+        commands();
 
     
 }

@@ -132,20 +132,24 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Instruction.cpp" />
+    <ClCompile Include="map\MapGenerator.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Ship.cpp" />
-    <ClCompile Include="CursorUtils.cpp" />
+    <ClCompile Include="utils\CursorUtils.cpp" />
+    <ClCompile Include="utils\FrameUtils.cpp" />
     <ClCompile Include="Źródło.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
-    <ClInclude Include="CursorUtils.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Instruction.h" />
+    <ClInclude Include="map\MapGenerator.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="utils\CursorUtils.h" />
+    <ClInclude Include="utils\FrameUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
