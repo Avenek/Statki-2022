@@ -9,6 +9,6 @@ class FrameUtils
 {
 public:
     static void createFrame(string, bool, int);
-    static void createFrame(string, bool, int, int);
+    static void createFrame(string, bool, int, int, int);
     static void createMovementListener(int&, bool&, int);
 };

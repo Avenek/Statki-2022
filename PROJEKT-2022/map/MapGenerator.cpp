@@ -560,7 +560,36 @@ void MapGenerator::doShowDots(int board[10][10])
 	}
 }
 
-void MapGenerator::generateRandomMap(Board board)
+void MapGenerator::chooseGenerationType(Board board)
+{
+	int choose = 0;
+	bool end = false;
+	while (end == false)
+	{
+		CursorUtils::setCursor(1, 1);
+		cout << endl << endl;
+		CursorUtils::setCursor(30, 3);
+		HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
+		cout << board.playerName;
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+		cout << ", wybierz w jaki sposob chcesz wygenerowac plansze";
+		FrameUtils::createFrame("Losowe generowanie", choose == 0, 1);
+		FrameUtils::createFrame("Reczne generowanie", choose == 1, 2);
+		FrameUtils::createMovementListener(choose, end, 2);
+	}
+	switch (choose) {
+	case 0:
+		if (!generateRandomMap(board)) chooseGenerationType(board);
+		break;
+	case 1:
+	default:
+		cout << "err" << endl;
+		break;
+	}
+}
+
+bool MapGenerator::generateRandomMap(Board board)
 {
 	int ulozenie1 = 1;
 	do
@@ -595,27 +624,23 @@ void MapGenerator::generateRandomMap(Board board)
 			}
 		}
 		doShowDots(board.gameBoard);
-
-		HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-		if (ulozenie1 != 1 && ulozenie1 != 0)
-		{
-			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
-			cout << "Dokonales zlego wyboru! Nie przechodz na ciemna strone mocy i wybierz wlasciwa cyfre!" << endl << endl;
-			cin.clear();
-			cin.ignore(100, '\n');
-		}
 		int choose = 1;
 		bool end = false;
+		char ch = 171;
 		while (end == false)
 		{
 			CursorUtils::setCursor(1, 1);
 			cout << endl << endl;
-			FrameUtils::createFrame("Rozlosuj jeszcze raz", choose == 1, 1, 20);
-			FrameUtils::createFrame("Super ulozenie, gramy", choose == 2, 2, 20);
-			FrameUtils::createMovementListener(choose, end, 2);
+			FrameUtils::createFrame("Rozlosuj jeszcze raz", choose == 1, 1, 20, -4);
+			FrameUtils::createFrame("Super ulozenie, gramy", choose == 2, 2, 20, -4);
+			FrameUtils::createFrame("Powrot", choose == 3, 3, 20, -4);
+			FrameUtils::createMovementListener(choose, end, 3);
 		}
 		ulozenie1 = choose;
+		if (ulozenie1 == 3) break;
 		if (ulozenie1 == 2) board.state = START_GAME;
 	} while ((ulozenie1 != 2 && ulozenie1 != 0));
 	system("cls");
+
+	return ulozenie1 != 3;
 }

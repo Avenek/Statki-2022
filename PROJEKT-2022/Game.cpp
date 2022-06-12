@@ -87,5 +87,5 @@ void Game::createGame(GameType gameType) {
 
 void Game::generateMap() {
 	MapGenerator gen;
-	gen.generateRandomMap(board1);
+	gen.chooseGenerationType(board1);
 }
