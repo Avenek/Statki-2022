@@ -1,4 +1,2 @@
-﻿  Źródło.cpp
-C:\Users\Denis\Desktop\stateczki\PROJEKT-2022\Źródło.cpp(62,10): warning C4101: "start": lokalna zmienna, do której nie istnieje odwołanie
-C:\Users\Denis\Desktop\stateczki\PROJEKT-2022\Źródło.cpp(62,17): warning C4101: "stop": lokalna zmienna, do której nie istnieje odwołanie
+﻿  MapGenerator.cpp
   PROJEKT-2022.vcxproj -> C:\Users\Denis\Desktop\stateczki\x64\Debug\PROJEKT-2022.exe

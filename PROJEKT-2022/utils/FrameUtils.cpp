@@ -6,7 +6,11 @@
 
 using namespace std;
 
-void FrameUtils::createFrame(string text, bool color = false, int n = 0)
+void FrameUtils::createFrame(string text, bool color = false, int n = 0) {
+	createFrame(text, color, n, 0);
+}
+
+void FrameUtils::createFrame(string text, bool color = false, int n = 0, int offsetX = 0)
 {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -18,7 +22,7 @@ void FrameUtils::createFrame(string text, bool color = false, int n = 0)
 	unsigned char PG = 187;
 	unsigned char PD = 188;
 	int len = text.length();
-	CursorUtils::setCursor(42, 1 + 6 * n);
+	CursorUtils::setCursor(42 + offsetX, 1 + 6 * n);
 	if (color == false)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	else
@@ -27,11 +31,11 @@ void FrameUtils::createFrame(string text, bool color = false, int n = 0)
 	for (int a = 0; a < 30; a++)
 		cout << poziom;
 	cout << PG << endl;
-	CursorUtils::setCursor(42, 2 + 6 * n);
+	CursorUtils::setCursor(42 + offsetX, 2 + 6 * n);
 	cout << pion;
-	CursorUtils::setCursor(73, 2 + 6 * n);
+	CursorUtils::setCursor(73 + offsetX, 2 + 6 * n);
 	cout << pion << endl;
-	CursorUtils::setCursor(42, 3 + 6 * n);
+	CursorUtils::setCursor(42 + offsetX, 3 + 6 * n);
 	if (color == false)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	else
@@ -41,20 +45,20 @@ void FrameUtils::createFrame(string text, bool color = false, int n = 0)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED | FOREGROUND_GREEN);
 	else
 		SetConsoleTextAttribute(hOut, FOREGROUND_BLUE);
-	CursorUtils::setCursor(43 + (31 - len) / 2, 3 + 6 * n);
+	CursorUtils::setCursor(43 + offsetX + (31 - len) / 2, 3 + 6 * n);
 	cout << text;
-	CursorUtils::setCursor(42 + (30 - len) / 2, 3 + 6 * n);
+	CursorUtils::setCursor(42 + offsetX + (30 - len) / 2, 3 + 6 * n);
 	if (color == false)
 		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	else
 		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
-	CursorUtils::setCursor(73, 3 + 6 * n);
+	CursorUtils::setCursor(73 + offsetX, 3 + 6 * n);
 	cout << pion << endl;
-	CursorUtils::setCursor(42, 4 + 6 * n);
+	CursorUtils::setCursor(42 + offsetX, 4 + 6 * n);
 	cout << pion;
-	CursorUtils::setCursor(73, 4 + 6 * n);
+	CursorUtils::setCursor(73 + offsetX, 4 + 6 * n);
 	cout << pion << endl;
-	CursorUtils::setCursor(42, 5 + 6 * n);
+	CursorUtils::setCursor(42 + offsetX, 5 + 6 * n);
 	cout << LD;
 	for (int a = 0; a < 30; a++)
 		cout << poziom;

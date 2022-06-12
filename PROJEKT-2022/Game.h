@@ -1,4 +1,5 @@
 #pragma once
+#include "Board.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -19,8 +20,8 @@ enum AiMode {
 
 class Game
 {
+	Board board1, board2;
 	bool versusPlayer;
-	string name1, name2;
 	AiMode aiMode;
 
 public:

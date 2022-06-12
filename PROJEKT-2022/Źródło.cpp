@@ -30,8 +30,7 @@ void play_music(string name) //Wybiera odpowiedni¹ muzykê dla zadanego argumentu
 }
 void show_welcome()
 {
-	HANDLE hOut;
-	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	CursorUtils::setCursor(26, 1);																					// Ekran startowy      
 	cout << "Statek w porcie jest bezpieczny, ale nie po to buduje sie statki..." << endl;

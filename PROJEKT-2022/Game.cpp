@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "utils/CursorUtils.h"
 #include "utils/FrameUtils.h"
+#include "map/MapGenerator.h"
 #include <iostream>
 #include <random>
 #include <windows.h>
@@ -51,7 +52,7 @@ void Game::createGame(GameType gameType) {
 
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 	cout << "Podaj imie pierwszego gracza: ";
-	cin >> name1;														// Tryb dwuosobowy, podanie imion graczy.
+	cin >> board1.playerName;														// Tryb dwuosobowy, podanie imion graczy.
 	cout << endl;
 	cout << "Podaj imie drugiego gracza: ";
 	if (gameType == VERSUS_COMPUTER) {
@@ -74,14 +75,17 @@ void Game::createGame(GameType gameType) {
 			Sleep(300);
 		}
 		Sleep(1000);
-		name2 = chosen;
+		board2.playerName = chosen;
 	}
 	else {
-		cin >> name2;
+		cin >> board2.playerName;
 	}
 	system("cls");
+
+	generateMap();
 }
 
 void Game::generateMap() {
-
+	MapGenerator gen;
+	gen.generateRandomMap(board1);
 }
