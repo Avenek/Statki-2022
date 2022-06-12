@@ -20,6 +20,7 @@ void Game::createGame(GameType gameType) {
 	case VERSUS_PLAYER:
 		FrameUtils::createFrame("Tryb dla dwoch graczy", false, 0);
 		aiMode = NONE;
+		versusPlayer = true;
 		break;
 	case VERSUS_COMPUTER:
 		while (end == false) {
@@ -82,10 +83,13 @@ void Game::createGame(GameType gameType) {
 	}
 	system("cls");
 
-	generateMap();
+	Game game;
+	game.aiMode = aiMode;
+	game.versusPlayer = versusPlayer;
+	generateMap(game);
 }
 
-void Game::generateMap() {
+void Game::generateMap(Game game) {
 	MapGenerator gen;
-	gen.chooseGenerationType(board1);
+	gen.chooseGenerationType(game, board1);
 }

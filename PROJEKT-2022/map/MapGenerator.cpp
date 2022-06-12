@@ -2,6 +2,7 @@
 #include "../utils/FrameUtils.h"
 #include "MapGenerator.h"
 #include "../Board.h"
+#include "../Game.h"
 #include <random>
 
 using namespace std;
@@ -560,7 +561,7 @@ void MapGenerator::doShowDots(int board[10][10])
 	}
 }
 
-void MapGenerator::chooseGenerationType(Board board)
+void MapGenerator::chooseGenerationType(Game game, Board board)
 {
 	int choose = 0;
 	bool end = false;
@@ -574,13 +575,19 @@ void MapGenerator::chooseGenerationType(Board board)
 		cout << board.playerName;
 		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 		cout << ", wybierz w jaki sposob chcesz wygenerowac plansze";
+
+		if (game.versusPlayer) {
+			CursorUtils::setCursor(25, 4);
+			SetConsoleTextAttribute(hOut, FOREGROUND_RED);
+			cout << "PAMIETAJ, ABY NIE POKAZYWAC ROZLOSOWANEJ PLANSZY SWOJEMY OPONENTOWI!" << endl;
+		}
 		FrameUtils::createFrame("Losowe generowanie", choose == 0, 1);
 		FrameUtils::createFrame("Reczne generowanie", choose == 1, 2);
 		FrameUtils::createMovementListener(choose, end, 2);
 	}
 	switch (choose) {
 	case 0:
-		if (!generateRandomMap(board)) chooseGenerationType(board);
+		if (!generateRandomMap(board)) chooseGenerationType(game, board);
 		break;
 	case 1:
 	default:

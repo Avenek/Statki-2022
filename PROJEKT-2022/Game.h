@@ -21,12 +21,11 @@ enum AiMode {
 class Game
 {
 	Board board1, board2;
+public:
 	bool versusPlayer;
 	AiMode aiMode;
-
-public:
 	void createGame(GameType);
-	void generateMap();
+	void generateMap(Game);
 	friend class Ship;
 };
 
