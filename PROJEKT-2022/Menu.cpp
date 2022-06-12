@@ -44,16 +44,11 @@ int Menu::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n
     {
         CursorUtils::setCursor(1, 1);                                                //Wyœwietlenie menu g³ównego, poruszanie siê za pomoc¹ strza³ek, akcept enterem
         cout << endl << endl;
-        choose == 0 ? color = true : color = false;
-        frame("Tryb dla dwoch graczy", color, 0);
-        choose == 1 ? color = true : color = false;
-        frame("Gra z komputerem", color, 1);
-        choose == 2 ? color = true : color = false;
-        frame("Instrukcja", color, 2);
-        choose == 3 ? color = true : color = false;
-        frame("Ustawienia", color, 3);
-        choose == 4 ? color = true : color = false;
-        frame("O autorze", color, 4);
+        frame("Tryb dla dwoch graczy", choose == 0, 0);
+        frame("Gra z komputerem", choose == 1, 1);
+        frame("Instrukcja", choose == 2, 2);
+        frame("Ustawienia", choose == 3, 3);
+        frame("O autorze", choose == 4, 4);
         moving(choose, end, 4);
     }
     return choose;

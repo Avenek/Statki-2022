@@ -29,12 +29,9 @@ void Instruction::show(void(*frame)(string, bool, int), void(*moving)(int&, bool
     {
         CursorUtils::setCursor(1, 1);
         cout << endl << endl;
-        choose == 0 ? color = true : color = false;
-        frame("Instrukcja dotyczaca rozgrywki", color, 0);   // Instrukcja
-        choose == 1 ? color = true : color = false;
-        frame("Komendy - ukladanie statkow", color, 1);     // Wypisanie komend
-        choose == 2 ? color = true : color = false;
-        frame("Menu glowne", color, 2);                     // Powrót do menu g³ównego
+        frame("Instrukcja dotyczaca rozgrywki", choose == 0, 0);   // Instrukcja
+        frame("Komendy - ukladanie statkow", choose == 1, 1);     // Wypisanie komend
+        frame("Menu glowne", choose == 2, 2);                     // Powrót do menu g³ównego
         moving(choose, end, 2);
     }
     if (choose == 0) how_to_play();

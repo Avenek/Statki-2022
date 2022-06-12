@@ -32,18 +32,14 @@ void Settings::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, 
 			cout << endl << endl;
 			welcome_screen == true ? option = "Wylacz " : option = "Wlacz ";	
 			option += "ekran powitalny";
-			choose == 0 ? color = true : color = false;
-			frame(option, color, 0);
+			frame(option, choose == 0, 0);
 			music == true ? option = "Wylacz " : option = "Wlacz ";
 			option += "muzyke ";
-			choose == 1 ? color = true : color = false;
-			frame(option, color, 1);
+			frame(option, choose == 1, 1);
 			effects == true ? option = "Wylacz " : option = "Wlacz ";		
 			option += "efekty dzwiekowe ";
-			choose == 2 ? color = true : color = false;
-			frame(option, color, 2);
-			choose == 3 ? color = true : color = false;
-			frame("Menu glowne", color, 3);
+			frame(option, choose == 2, 2);
+			frame("Menu glowne", choose == 3, 3);
 			moving(choose, end, 3);
 		}
 		if (choose == 0)
@@ -53,15 +49,10 @@ void Settings::show(void(*frame)(string, bool, int), void(*moving)(int&, bool&, 
 		else if (choose == 1)
 		{
 			if (music == true)
-			{
-				music = false;
 				play_music("mute");
-			}
 			else
-			{
-				music = true;
 				play_music("game");
-			}
+			music = !music;
 		}
 		else if (choose == 2)
 		{

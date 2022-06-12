@@ -23,14 +23,10 @@ void Game::createGame(GameType gameType, void(*frame)(string, bool, int), void(*
 		while (end == false) {
 			CursorUtils::setCursor(1, 1);                                                //Wyœwietlenie menu g³ównego, poruszanie siê za pomoc¹ strza³ek, akcept enterem
 			cout << endl << endl;
-			choose == 0 ? color = true : color = false;
-			frame("Powrot do menu", color, 0);
-			choose == 1 ? color = true : color = false;
-			frame("Tryb latwy", color, 1);
-			choose == 2 ? color = true : color = false;
-			frame("Tryb normalny", color, 2);
-			choose == 3 ? color = true : color = false;
-			frame("Tryb trudny", color, 3);
+			frame("Powrot do menu", choose == 0, 0);
+			frame("Tryb latwy", choose == 1, 1);
+			frame("Tryb normalny", choose == 2, 2);
+			frame("Tryb trudny", choose == 3, 3);
 			moving(choose, end, 3);
 		}
 		//koniec funkcji, powrot do menu
