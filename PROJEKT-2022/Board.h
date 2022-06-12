@@ -7,16 +7,27 @@
 #include <ctime>
 #include "Ship.h"
 #include <fstream>
+#include <vector>
 using namespace std;
-class Ship;
+
+enum State {
+	START_GAME
+};
+
+class ship;
+
 class Board
 {
-protected:
-	int board[10][10];
-	Ship ship_board[10][10];
-	int player;
-	string player_name;
 public:
-	void load_names();
+
+	
+	friend class Ship;
+	friend class Game;
+	int gameBoard[10][10];
+	Ship shipBoard[10][10];
+	string playerName;
+	State state;
+	Board();
+	~Board();
 };
 

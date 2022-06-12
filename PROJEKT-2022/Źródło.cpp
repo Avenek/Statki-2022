@@ -11,7 +11,7 @@
 #include "Game.h"
 #include "Instruction.h"
 #include "Settings.h"
-#include "CursorUtils.h"
+#include "utils/CursorUtils.h"
 
 using namespace std;
 
@@ -30,8 +30,7 @@ void play_music(string name) //Wybiera odpowiedni¹ muzykê dla zadanego argumentu
 }
 void show_welcome()
 {
-	HANDLE hOut;
-	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hOut, FOREGROUND_RED);
 	CursorUtils::setCursor(26, 1);																					// Ekran startowy      
 	cout << "Statek w porcie jest bezpieczny, ale nie po to buduje sie statki..." << endl;
@@ -46,86 +45,6 @@ void show_welcome()
 	file.close();
 	Sleep(3000);
 	system("cls");
-}
-void frame(string napis, bool color=false, int n=0)
-{
-	HANDLE hOut;
-	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	//RAMECZKOWE ZMIENNE//
-	unsigned char LG = 201;
-	unsigned char poziom = 205;
-	unsigned char pion = 186;
-	unsigned char LD = 200;
-	unsigned char PG = 187;
-	unsigned char PD = 188;
-	int dl = napis.length();
-	CursorUtils::setCursor(42,1+6*n);
-	if (color == false)
-		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
-	else
-		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
-	cout << LG;
-	for (int a = 0; a < 30; a++)
-		cout << poziom;
-	cout << PG << endl;
-	CursorUtils::setCursor(42, 2 + 6 * n);
-	cout << pion;
-	CursorUtils::setCursor(73, 2 + 6 * n);
-	cout << pion << endl;
-	CursorUtils::setCursor(42, 3 + 6 * n);
-	if (color == false)
-		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
-	else
-		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
-	cout << pion;
-	if (color == false)
-		SetConsoleTextAttribute(hOut, FOREGROUND_RED | FOREGROUND_GREEN);
-	else
-		SetConsoleTextAttribute(hOut, FOREGROUND_BLUE);
-	CursorUtils::setCursor(43 + (31 - dl) / 2 , 3 + 6 * n);
-	cout << napis;
-	CursorUtils::setCursor(42 + (30 - dl) / 2 , 3 + 6 * n);
-	if (color == false)
-		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
-	else
-		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
-	CursorUtils::setCursor(73, 3 + 6 * n);
-	cout << pion << endl;
-	CursorUtils::setCursor(42,4 + 6 * n);
-	cout << pion;
-	CursorUtils::setCursor(73, 4 + 6 * n);
-	cout << pion << endl;
-	CursorUtils::setCursor(42, 5 + 6 * n);
-	cout << LD;
-	for (int a = 0; a < 30; a++)
-		cout << poziom;
-	cout << PD << endl;
-	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-
-}
-
-void moving(int &choose, bool &end, int number)
-{
-	unsigned char sign = 224;
-	switch (sign)
-	{
-	case 0: //klawisze specjalne (czasem zero, czasem 224 - zale¿ne od pc'ta chyba)
-	case 224: //klawisze specjalne
-	{
-		sign = _getch();
-		if (sign == 72 && choose > 0 && number !=0) //strza³ka w górê
-			choose -= 1;
-
-		else if (sign == 80 && choose < number) //strza³ka w dó³
-			choose += 1;
-		else if (sign == 13) //ENTER
-		{
-			end = true;
-			system("cls");
-		}
-	}
-	}
 }
 
 int main()
@@ -163,7 +82,6 @@ int main()
 	unsigned char square = 254;
 
 	
-	
 	settings.load_settings(welcome_screen, music, effects);			//wczytanie danych z pliku
 
 	if (music == true)
@@ -175,23 +93,30 @@ int main()
 	
 	while (menu.if_menu == true)
 	{
-		int option = menu.show(&frame, &moving);	// Pokazanie ekranu menu g³ównego wraz z wyborem
+		int option = menu.show();	// Pokazanie ekranu menu g³ównego wraz z wyborem
 		if (option == 0)
+		{
 			Game game;											// Gra z przeciwnikiem
+			
+			game.createGame(VERSUS_PLAYER);
+		}
 		else if (option == 1)
+		{
 			Game game;											// Gra z komputerem
+			game.createGame(VERSUS_COMPUTER);
+		}
 		else if (option == 2)
 		{
 			Instruction instruction(0);
-			instruction.show(&frame, &moving);    // Instrukcja
+			instruction.show();    // Instrukcja
 		}
 		else if (option == 3)
 		{
-			settings.show(&frame, &moving, &play_music, welcome_screen, music, effects);    // Instrukcja
+			settings.show(&play_music, welcome_screen, music, effects);    // Instrukcja
 		}
 		else if (option == 4)
 		{
-			menu.info(&frame, &moving);			 // O autorze
+			menu.info();			 // O autorze
 		}
 	}
 
