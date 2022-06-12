@@ -53,71 +53,38 @@ void Game::createGame(GameType gameType, void(*frame)(string, bool, int), void(*
 	}
 
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-	string imie1, imie2;
 	cout << "Podaj imie pierwszego gracza: ";
-	cin >> imie1;														// Tryb dwuosobowy, podanie imion graczy.
+	cin >> name1;														// Tryb dwuosobowy, podanie imion graczy.
 	cout << endl;
 	cout << "Podaj imie drugiego gracza: ";
 	if (gameType == VERSUS_COMPUTER) {
+		string names[3] = { "Kapitan", "Omnibus", "Klodnica" };
+		string chosen;
 		switch (aiMode) {
 		case HARD:
-			cout << "K";
-			Sleep(300);
-			cout << "a";
-			Sleep(300);
-			cout << "p";
-			Sleep(300);
-			cout << "i";
-			Sleep(300);
-			cout << "t";
-			Sleep(300);
-			cout << "a";
-			Sleep(300);
-			cout << "n";
-			Sleep(1000);
-			imie2 = "Kapitan";
+			chosen = names[0];
 			break;
 		case MEDIUM:
-			cout << "O";
-			Sleep(300);
-			cout << "m";
-			Sleep(300);
-			cout << "n";
-			Sleep(300);
-			cout << "i";
-			Sleep(300);
-			cout << "b";
-			Sleep(300);
-			cout << "u";
-			Sleep(300);
-			cout << "s";
-			Sleep(1000);
-			imie2 = "Omnibus";
+			chosen = names[1];
 			break;
 		case EASY:
 		default:
-			cout << "K";
-			Sleep(300);
-			cout << "l";
-			Sleep(300);
-			cout << "o";
-			Sleep(300);
-			cout << "d";
-			Sleep(300);
-			cout << "n";
-			Sleep(300);
-			cout << "i";
-			Sleep(300);
-			cout << "c";
-			Sleep(300);
-			cout << "a";
-			Sleep(1000);
-			imie2 = "Klodnica";
+			chosen = names[2];
 			break;
 		}
+		for (char ch : chosen) {
+			cout << ch;
+			Sleep(300);
+		}
+		Sleep(1000);
+		name2 = chosen;
 	}
 	else {
-		cin >> imie2;
+		cin >> name2;
 	}
 	system("cls");
+}
+
+void Game::generateMap(void(*frame)(string, bool, int), void(*moving)(int&, bool&, int n)) {
+
 }

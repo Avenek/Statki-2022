@@ -1,2 +1,9 @@
 ﻿  Game.cpp
+  Instruction.cpp
+  Settings.cpp
+  Źródło.cpp
+C:\Users\Denis\Desktop\stateczki\PROJEKT-2022\Źródło.cpp(67,25): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\Denis\Desktop\stateczki\PROJEKT-2022\Źródło.cpp(147,10): warning C4101: "start": lokalna zmienna, do której nie istnieje odwołanie
+C:\Users\Denis\Desktop\stateczki\PROJEKT-2022\Źródło.cpp(147,17): warning C4101: "stop": lokalna zmienna, do której nie istnieje odwołanie
+  Generowanie kodu...
   PROJEKT-2022.vcxproj -> C:\Users\Denis\Desktop\stateczki\x64\Debug\PROJEKT-2022.exe
