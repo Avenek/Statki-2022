@@ -16,19 +16,11 @@ Instruction::Instruction(int c)
 {
     choose = c;
 }
-
-void Instruction::commands()
-{
-   
-}
-
 void fill(int num)
 {
 	for (int a = 0; a < num; a++)
 		cout << " ";
 }
-
-
 void showComputerImage()
 {
 	unsigned char LG = 201;
@@ -71,6 +63,66 @@ void showComputerImage()
 	fill(54);
 	cout << LD << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << poziom << PD << endl << endl;
 	Sleep(1000);
+}
+
+void Instruction::commands()
+{
+	bool end = false;
+	system("cls");
+	
+		HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+		//SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
+		////showComputerImage();
+		//SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+		//string powitanie = "Witaj, jestem slaba maszyna liczaca 'Klodnica'. Moim zadaniem jest pokazanie Ci potrzebnych komend, ktore przydadza ci  sie podczas recznego ukladania statkow. Niestety jestem tylko slaba maszyna liczaca, a wiec nie zrobie Ci tak swietnego tutorialu, jak 'Kapitan', a jedynie wypisze ci ponizej najwazniejsze wskazowki.";
+		//int dl_powi1 = powitanie.length();
+		///*for (int i = 0; i < dl_powi1; i++)
+		//{
+		//	cout << powitanie[i];
+		//	Sleep(100);
+		//}
+		//Sleep(3000);
+		//system("cls");*/
+
+		fill(45);
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
+		cout << "USTAWIANIE STATKOW NA PLANSZE" << endl;
+		fill(25);
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+		cout << "1. Podaj dlugosc statku (1-4). Zatwierdz enterem." << endl;
+		fill(25);
+		cout << "2. Podaj kolumne (A-J), wiersz (1-10) i zatwierdz enterem." << endl;
+		fill(25);
+		cout << "3. Podaj kierunek (1-4). 1 - w gore, 2 - w prawo, 3 - w dol, 4 - w lewo." << endl << endl;
+		fill(45);
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
+		cout << "SCIAGANIE STATKOW Z PLANSZY" << endl;
+		fill(25);
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+		cout << "1. Podaj dlugosc statku (1-4). Zatwierdz enterem." << endl;
+		fill(25);
+		cout << "2. Jako kolumne i wiersz podajodpowiednio zera, a wiec wpisz '00' i zatwierdz enterem." << endl;
+		fill(25);
+		cout << "3. Postepuj zgodnie z instrukcjami na ekranie." << endl << endl;
+		fill(45);
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
+		cout << "ZAKONCZENIE UKLADANIA STATKOW" << endl;
+		fill(5);
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+		cout << "1. Kiedy wylozysz juz wszystkie statki na plansze, wpisz 'OK', kiedy program cie poprosi o podanie dlugosci statku." << endl;
+		fill(5);
+		cout << "2. Jezeli wylozyles poprawnie wszystkie statki - przejdziesz dalej, inaczej program poprosi cie o poprawe." << endl << endl;
+		fill(45);
+		SetConsoleTextAttribute(hOut, FOREGROUND_RED);
+		cout << "REZYGNACJA Z WLASNORECZNEGO UKLADANIA" << endl;
+		fill(5);
+		SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+		cout << "1. Jezeli chcesz jednak losowo rozlosowac statki, to wpisz 'POWROT', a program cie przeniesie do poprzedniego menu." << endl << endl;
+		while (end == false)
+		{
+		FrameUtils::createFrame("Menu glowne", true, 3);                                          // Mo¿liwoœæ wyjœcia za pomoc¹ entera
+		FrameUtils::createMovementListener(choose, end, 0);
+		}
 }
 
 void setShipShotColorTutorial(bool red) {
@@ -143,10 +195,8 @@ void Instruction::how_to_play()
 	cout << "XYZ" << ", to twoja tura! Strzelaj!";
 	cout << endl;
 
-	setShipShotColorTutorial(game.board2.three1);
-	cout << game.CHECK_MARK << game.CHECK_MARK << game.CHECK_MARK << "  ";
-	setShipShotColorTutorial(game.board2.three2);
-	cout << game.CHECK_MARK << game.CHECK_MARK << game.CHECK_MARK;
+	setShipShotColorTutorial(game.board1.four1);
+	cout << "  " << game.CHECK_MARK << game.CHECK_MARK << game.CHECK_MARK << game.CHECK_MARK << "  ";
 
 	cout << endl;
 
@@ -154,7 +204,7 @@ void Instruction::how_to_play()
 	fill(22);
 	cout << "Plansza gracza ";
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
-	cout << "XYZ";
+	cout << "WROG";
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 	cout << endl << endl;
 	cout << "   ";
@@ -394,10 +444,12 @@ void Instruction::how_to_play()
 	}
 	string zestrzelony = "Brawo, trafiles! Jak widzisz, na samej gorze ekranu pokazal sie napis 'TRAFIONY'. ";
 	string zestrzelony2 = "To wlasnie tam beda sie pojawiac      informacje, ktore pokaza ci efekt twojego strzalu. Na planszy pojawil sie takze czerwony x.";
-	string zestrzelony3 = " Oznacza on, ze w tym miejscujest zestrzelony statek. Jezeli nie pojawily sie wokol niego koleczka, to  znaczy, ze nie zostal jeszcze zatopiony. To co, pozwol, ze ja teraz strzele w ";
+	string zestrzelony3 = " Oznacza on, ze w tym miejscujest zestrzelony statek. Jezeli nie pojawily sie wokol niego koleczka, to znaczy, ze nie zostal jeszcze zatopiony.      ";
+	string zestrzelony4 = "To co, pozwol, ze ja teraz strzele w ";
 	int dlugosc_z1 = zestrzelony.length();
 	int dlugosc_z2 = zestrzelony2.length();
 	int dlugosc_z3 = zestrzelony3.length();
+	int dlugosc_z4 = zestrzelony4.length();
 	for (int i = 0; i < dlugosc_z1; i++)
 	{
 		cout << zestrzelony[i];
@@ -413,6 +465,12 @@ void Instruction::how_to_play()
 	for (int i = 0; i < dlugosc_z3; i++)
 	{
 		cout << zestrzelony3[i];
+		Sleep(50);
+	}
+	Sleep(2000);
+	for (int i = 0; i < dlugosc_z4; i++)
+	{
+		cout << zestrzelony4[i];
 		Sleep(50);
 	}
 	Sleep(2000);
@@ -436,7 +494,7 @@ void Instruction::how_to_play()
 	{
 		if (wier + 1 <= 9)
 		{
-			cout << kol << wier + 1;
+			cout << kol << wier + 2;
 			planszaInstr[wier + 1][kolu] = 2;
 			game.board1.two1 = true;
 			for (int a = 0; a < 3; a++)
@@ -452,8 +510,8 @@ void Instruction::how_to_play()
 		}
 		else
 		{
-			cout << kol << wier - 1;
-			planszaInstr[wier + 1][kolu] = 2;
+			cout << kol << wier - 2;
+			planszaInstr[wier - 1][kolu] = 2;
 			game.board1.two1 = true;
 			for (int a = 0; a < 3; a++)
 			{
