@@ -1,5 +1,6 @@
 #pragma once
 #include "Game.h"
+#include "AiKnowledge.h"
 #include "utils/CursorUtils.h"
 #include "utils/FrameUtils.h"
 #include "utils/SoundUtils.h"
@@ -383,985 +384,79 @@ void getGameTime(Game game)
 
 }
 
+int columnToNumber(char col) {
+	int column;
+	if (col >= 65 && col <= 74)
+	{
+		column = static_cast<int>(col);
+		column = column - 65;
+	}
+	else if (col >= 97 && col <= 106)
+	{
+		column = static_cast<int>(col);
+		column = column - 97;
+	}
+	else
+		column = static_cast<int>(col);
+	return column;
+}
+
 void askForInput(Game game) {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-	int licz{};
-	int tabx[100]{};
-	int x{};
-	int taby[100]{};
-	int y{};
-	int wspolrzedna{};
 	int czworka = 0;
 	int czworka2 = 0;
 	int playRow{};
-	char graczkol{};
 	int playColumn{};
 	bool koniec_gry = false;
-	bool k_trafiony = false;
-	int k_wiersz = -1;
-	int k_kolumna = -1;
-	int k_kierunek = 0;
-	int k_sprawdzKierunek = 0;
+	AiKnowledge ai = AiKnowledge();
 
 	while (koniec_gry == false)
 	{
 		if (game.playerOneTurn)
 		{
 			cout << "  Podaj kolumne (A-J), a nastepnie wiersz(1-10): ";
-			cin >> graczkol;
+			char ch;
+			cin >> ch;
+			playColumn = columnToNumber(ch);
+
+			gapFillers(48);
+			cin >> playRow;
+			playRow = playRow - 1;
 		}
 		else
 		{
 
 			gapFillers(65);
 			cout << "  Podaj kolumne (A-J), a nastepnie wiersz(1-10): ";
-			if (game.aiMode == EASY)
+
+			if (!game.versusPlayer)
 			{
-				do
-				{
-					playRow = rowL(randGen);
-					playColumn = colL(randGen);
-				} while (game.board1.gameBoard[playRow][playColumn] == 6 || game.board1.gameBoard[playRow][playColumn] == 5);
+				ai.guessPosition(game, playColumn, playRow);
+
+				if (playColumn == 0) cout << "A";
+				else if (playColumn == 1) cout << "B";
+				else if (playColumn == 2) cout << "C";
+				else if (playColumn == 3) cout << "D";
+				else if (playColumn == 4) cout << "E";
+				else if (playColumn == 5) cout << "F";
+				else if (playColumn == 6) cout << "G";
+				else if (playColumn == 7) cout << "H";
+				else if (playColumn == 8) cout << "I";
+				else if (playColumn == 9) cout << "J";
+				Sleep(1000);
+				cout << playRow + 1;
+				Sleep(1500);
 			}
-			else if (game.aiMode == MEDIUM)
-			{
-				if (k_trafiony == false)
-				{
-					do
-					{
-						playRow = rowL(randGen);
-						playColumn = colL(randGen);
-					} while (game.board1.gameBoard[playRow][playColumn] == 6 || game.board1.gameBoard[playRow][playColumn] == 5);
-				}
-				else
-				{
-					if (k_sprawdzKierunek == 0)
-					{
-						do
-						{
-							k_kierunek = directionL(randGen) + 1;
-							if (k_wiersz == 0 && k_kierunek == 1) k_kierunek = 0;
-							else if (k_wiersz == 9 && k_kierunek == 3) k_kierunek = 0;
-							else if (k_kolumna == 0 && k_kierunek == 4) k_kierunek = 0;
-							else if (k_kolumna == 9 && k_kierunek == 2) k_kierunek = 0;
-							if (k_kierunek == 1 && game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5) k_kierunek = 0;
-							else if (k_kierunek == 2 && game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 5) k_kierunek = 0;
-							else if (k_kierunek == 3 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 5) k_kierunek = 0;
-							else if (k_kierunek == 4 && game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5) k_kierunek = 0;
+			else {
+				char ch;
+				cin >> ch;
+				playColumn = columnToNumber(ch);
 
-						} while (k_kierunek == 0);
-						if (k_kierunek == 1)
-						{
-							playRow = k_wiersz - 1;
-							playColumn = k_kolumna;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 2;
-
-						}
-						else if (k_kierunek == 2)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 1;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 1;
-
-						}
-						else if (k_kierunek == 3)
-						{
-							playRow = k_wiersz + 1;
-							playColumn = k_kolumna;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 2;
-
-						}
-						else if (k_kierunek == 4)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 1;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 1;
-
-						}
-					}
-
-					else if (k_sprawdzKierunek == 1)
-					{
-						if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna - 1] != 6 && k_kolumna - 1 >= 0)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 1;
-						}
-						else if ((game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna + 1] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 1] != 6 && k_kolumna + 1 <= 9)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 1;
-						}
-						else if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6 && (game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna - 2] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna - 2] != 6 && k_kolumna - 2 >= 0)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 2;
-						}
-						else if ((game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna + 2] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 2] != 6 && k_kolumna + 2 <= 9)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 2;
-						}
-						else if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6 && (game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna - 2] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna - 3] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna - 3] != 6 && k_kolumna - 3 >= 0)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 3;
-						}
-						else if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna + 2] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna + 3] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 3] != 6 && k_kolumna + 3 <= 9)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 3;
-						}
-					}
-					else if (k_sprawdzKierunek == 2)
-					{
-						if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz - 1][k_kolumna] != 6 && k_wiersz - 1 >= 0)
-						{
-							playRow = k_wiersz - 1;
-							playColumn = k_kolumna;
-						}
-						else if ((game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5 || game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6) && game.board1.gameBoard[k_wiersz + 1][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] != 6 && k_wiersz + 1 <= 9)
-						{
-							playRow = k_wiersz + 1;
-
-						}
-						else if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6 && (game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 5 || game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 6) && game.board1.gameBoard[k_wiersz - 2][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz - 2][k_kolumna] != 6 && k_wiersz - 2 >= 0)
-						{
-							playRow = k_wiersz - 2;
-							playColumn = k_kolumna;
-						}
-						else if ((game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5 || game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6) && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 2][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz + 2][k_kolumna] != 6 && k_wiersz + 2 <= 9)
-						{
-							playRow = k_wiersz + 2;
-							playColumn = k_kolumna;
-						}
-						else if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz - 2][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 5 && game.board1.gameBoard[k_wiersz - 3][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz - 3][k_kolumna] != 6 && k_wiersz - 3 >= 0)
-						{
-							playRow = k_wiersz - 3;
-							playColumn = k_kolumna;
-						}
-						else if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 2][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 3][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz + 3][k_kolumna] != 6 && k_wiersz + 3 <= 9)
-						{
-							playRow = k_wiersz + 3;
-							playColumn = k_kolumna;
-						}
-
-					}
-
-				}
+				gapFillers(48);
+				cin >> playRow;
+				playRow = playRow - 1;
 			}
-			else if (game.aiMode == HARD)
-			{
-				if (k_trafiony == false)
-				{
-					if (game.board1.two3 == false || game.board1.three2 == false || game.board1.four1 == false)
-					{
-						licz = 0;
-						x = 0;
-						y = 0;
-						for (int p = 0; p < 100; p++)
-						{
-							tabx[p] = 0;
-							taby[p] = 0;
-						}
-
-						if (game.board1.two3 == false)
-						{
-							for (int p = 0; p < 10; p++)
-							{
-								for (int q = 0; q < 10; q++)
-								{
-									if (p != 0 && p != 9 && q != 0 && q != 9)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-										{
-											++licz;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-								}
-							}
-
-							if (licz == 0)
-							{
-								for (int p = 0; p < 10; p++)
-								{
-									for (int q = 0; q < 10; q++)
-									{
-										if (p == 0 && q > 0 && q < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (p == 9 && q > 0 && q < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 0 && p > 0 && p < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 9 && p > 0 && p < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										if (p != 0 && p != 9 && q != 0 && q != 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-											else if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-											else if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-											else if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-									}
-								}
-							}
-							if (licz == 0)
-							{
-								for (int p = 0; p < 10; p++)
-								{
-									for (int q = 0; q < 10; q++)
-									{
-										if (((p == 0 && q == 0) && (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6))
-											|| ((p == 0 && q == 9) && (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6))
-											|| ((p == 9 && q == 0) && (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6))
-											|| ((p == 9 && q == 9) && (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)))
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-										}
-										else if (p == 0 && q > 0 && q < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p == 9 && q > 0 && q < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 0 && p > 0 && p < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 9 && p > 0 && p < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (p != 0 && p != 9 && q != 0 && q != 9)
-										{
-
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-									}
-								}
-							}
-							if (licz == 0)
-							{
-								for (int p = 0; p < 10; p++)
-								{
-									for (int q = 0; q < 10; q++)
-									{
-										if (p == 0 && q == 0)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p == 0 && q == 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p == 9 && q == 0)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p == 9 && q == 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p == 0 && q > 0 && q < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p == 9 && q > 0 && q < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (q == 0 && p > 0 && p < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 9 && p > 0 && p < 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-										else if (p != 0 && p != 9 && q != 0 && q != 9)
-										{
-											if ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6)
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6))
-												|| ((game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-											}
-										}
-									}
-								}
-							}
-						}
-						else if (game.board1.three2 == false)
-						{
-							for (int p = 0; p < 10; p++)
-							{
-								for (int q = 0; q < 10; q++)
-								{
-									if (p == 0 && q > 0 && q < 9)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-										}
-									}
-									else if (p == 9 && q > 0 && q < 9)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (q == 0 && p > 0 && p < 9)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (q == 9 && p > 0 && p < 9)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (p != 0 && p != 9 && q != 0 && q != 9)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-								}
-							}
-							if (licz == 0)
-							{
-								for (int p = 0; p < 10; p++)
-								{
-									for (int q = 0; q < 10; q++)
-									{
-										if (p == 0 && q > 0 && q < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (p == 9 && q > 0 && q < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 0 && p > 0 && p < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 9 && p > 0 && p < 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (p != 0 && p != 9 && q != 0 && q != 9)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-											else if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6)
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-									}
-								}
-							}
-						}
-						else if (game.board1.four1 == false)
-						{
-							for (int p = 0; p < 10; p++)
-							{
-								for (int q = 0; q < 10; q++)
-								{
-									if (p == 0 && q > 1 && q < 8)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && ((game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6) || (game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)) && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6 && game.board1.gameBoard[p + 3][q] != 5 && game.board1.gameBoard[p + 3][q] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (p == 9 && q > 1 && q < 8)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && ((game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6) || (game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)) && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6 && game.board1.gameBoard[p - 3][q] != 5 && game.board1.gameBoard[p - 3][q] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (q == 0 && p > 1 && p < 8)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && ((game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6) || (game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)) && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6 && game.board1.gameBoard[p][q + 3] != 5 && game.board1.gameBoard[p][q + 3] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (q == 9 && p > 1 && p < 8)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && ((game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6) || (game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)) && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6 && game.board1.gameBoard[p][q - 3] != 5 && game.board1.gameBoard[p][q + 3] != 6)
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-									else if (p != 0 && p != 9 && q != 0 && q != 9 && p != 1 && p != 8 && q != 1 && q != 8)
-									{
-										if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && ((game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6) || (game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)) && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && ((game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6) || (game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)))
-										{
-											licz++;
-											tabx[x] = p;
-											taby[y] = q;
-											x++;
-											y++;
-
-										}
-									}
-								}
-							}
-							if (licz == 0)
-							{
-								for (int p = 0; p < 10; p++)
-								{
-									for (int q = 0; q < 10; q++)
-									{
-										if (p == 0 && q > 1 && q < 8)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && ((game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6) || (game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (p == 9 && q > 1 && q < 8)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && ((game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6) || (game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 0 && p > 1 && p < 8)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && ((game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6) || (game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (q == 9 && p > 1 && p < 8)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && ((game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6) || (game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-										else if (p != 0 && p != 9 && q != 0 && q != 9 && p != 1 && p != 8 && q != 1 && q != 8)
-										{
-											if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p][q - 1] != 5 && game.board1.gameBoard[p][q - 1] != 6 && game.board1.gameBoard[p][q + 1] != 5 && game.board1.gameBoard[p][q + 1] != 6 && ((game.board1.gameBoard[p][q - 2] != 5 && game.board1.gameBoard[p][q - 2] != 6) || (game.board1.gameBoard[p][q + 2] != 5 && game.board1.gameBoard[p][q + 2] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-											else if (game.board1.gameBoard[p][q] != 5 && game.board1.gameBoard[p][q] != 6 && game.board1.gameBoard[p - 1][q] != 5 && game.board1.gameBoard[p - 1][q] != 6 && game.board1.gameBoard[p + 1][q] != 5 && game.board1.gameBoard[p + 1][q] != 6 && ((game.board1.gameBoard[p - 2][q] != 5 && game.board1.gameBoard[p - 2][q] != 6) || (game.board1.gameBoard[p + 2][q] != 5 && game.board1.gameBoard[p + 2][q] != 6)))
-											{
-												licz++;
-												tabx[x] = p;
-												taby[y] = q;
-												x++;
-												y++;
-
-											}
-										}
-
-									}
-								}
-							}
-						}
-
-						uniform_int_distribution<int> wsp(0, x);
-						do
-						{
-							wspolrzedna = wsp(randGen);
-
-							playRow = tabx[wspolrzedna];
-							playColumn = taby[wspolrzedna];
-						} while (game.board1.gameBoard[playRow][playColumn] == 5 || game.board1.gameBoard[playRow][playColumn] == 6);
-					}
-					else
-					{
-						do
-						{
-							playRow = rowL(randGen);
-							playColumn = colL(randGen);
-						} while (game.board1.gameBoard[playRow][playColumn] == 6 || game.board1.gameBoard[playRow][playColumn] == 5);
-
-					}
-				}
-				else
-				{
-					if (k_sprawdzKierunek == 0)
-					{
-						do
-						{
-							k_kierunek = directionL(randGen) + 1;
-							if (k_wiersz == 0 && k_kierunek == 1) k_kierunek = 0;
-							else if (k_wiersz == 9 && k_kierunek == 3) k_kierunek = 0;
-							else if (k_kolumna == 0 && k_kierunek == 4) k_kierunek = 0;
-							else if (k_kolumna == 9 && k_kierunek == 2) k_kierunek = 0;
-							if (k_kierunek == 1 && game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5) k_kierunek = 0;
-							else if (k_kierunek == 2 && game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 5) k_kierunek = 0;
-							else if (k_kierunek == 3 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 5) k_kierunek = 0;
-							else if (k_kierunek == 4 && game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5) k_kierunek = 0;
-
-						} while (k_kierunek == 0);
-						if (k_kierunek == 1)
-						{
-							playRow = k_wiersz - 1;
-							playColumn = k_kolumna;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 2;
-
-						}
-						else if (k_kierunek == 2)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 1;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 1;
-
-						}
-						else if (k_kierunek == 3)
-						{
-							playRow = k_wiersz + 1;
-							playColumn = k_kolumna;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 2;
-
-						}
-						else if (k_kierunek == 4)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 1;
-							if (game.board1.gameBoard[playRow][playColumn] == 3 || game.board1.gameBoard[playRow][playColumn] == 4) k_sprawdzKierunek = 1;
-
-						}
-					}
-
-					else if (k_sprawdzKierunek == 1)
-					{
-						if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna - 1] != 6 && k_kolumna - 1 >= 0)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 1;
-						}
-						else if ((game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna + 1] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 1] != 6 && k_kolumna + 1 <= 9)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 1;
-						}
-						else if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6 && (game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna - 2] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna - 2] != 6 && k_kolumna - 2 >= 0)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 2;
-						}
-						else if ((game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna + 2] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 2] != 6 && k_kolumna + 2 <= 9)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 2;
-						}
-						else if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 6 && (game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 5 || game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6) && game.board1.gameBoard[k_wiersz][k_kolumna - 2] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna - 3] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna - 3] != 6 && k_kolumna - 3 >= 0)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna - 3;
-						}
-						else if (game.board1.gameBoard[k_wiersz][k_kolumna - 1] == 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 1] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna + 2] == 6 && game.board1.gameBoard[k_wiersz][k_kolumna + 3] != 5 && game.board1.gameBoard[k_wiersz][k_kolumna + 3] != 6 && k_kolumna + 3 <= 9)
-						{
-							playRow = k_wiersz;
-							playColumn = k_kolumna + 3;
-						}
-					}
-					else if (k_sprawdzKierunek == 2)
-					{
-						if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz - 1][k_kolumna] != 6 && k_wiersz - 1 >= 0)
-						{
-							playRow = k_wiersz - 1;
-							playColumn = k_kolumna;
-						}
-						else if ((game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5 || game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6) && game.board1.gameBoard[k_wiersz + 1][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] != 6 && k_wiersz + 1 <= 9)
-						{
-							playRow = k_wiersz + 1;
-							playColumn = k_kolumna;
-						}
-						else if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6 && (game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 5 || game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 6) && game.board1.gameBoard[k_wiersz - 2][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz - 2][k_kolumna] != 6 && k_wiersz - 2 >= 0)
-						{
-							playRow = k_wiersz - 2;
-							playColumn = k_kolumna;
-						}
-						else if ((game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5 || game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6) && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 2][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz + 2][k_kolumna] != 6 && k_wiersz + 2 <= 9)
-						{
-							playRow = k_wiersz + 2;
-							playColumn = k_kolumna;
-						}
-						else if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz - 2][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 5 && game.board1.gameBoard[k_wiersz - 3][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz - 3][k_kolumna] != 6 && k_wiersz - 3 >= 0)
-						{
-							playRow = k_wiersz - 3;
-							playColumn = k_kolumna;
-						}
-						else if (game.board1.gameBoard[k_wiersz - 1][k_kolumna] == 5 && game.board1.gameBoard[k_wiersz + 1][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 2][k_kolumna] == 6 && game.board1.gameBoard[k_wiersz + 3][k_kolumna] != 5 && game.board1.gameBoard[k_wiersz + 3][k_kolumna] != 6 && k_wiersz + 3 <= 9)
-						{
-							playRow = k_wiersz + 3;
-							playColumn = k_kolumna;
-						}
-					}
-				}
-			}
-			if (playColumn == 0) cout << "A";
-			else if (playColumn == 1) cout << "B";
-			else if (playColumn == 2) cout << "C";
-			else if (playColumn == 3) cout << "D";
-			else if (playColumn == 4) cout << "E";
-			else if (playColumn == 5) cout << "F";
-			else if (playColumn == 6) cout << "G";
-			else if (playColumn == 7) cout << "H";
-			else if (playColumn == 8) cout << "I";
-			else if (playColumn == 9) cout << "J";
-			Sleep(1000);
-			cout << playRow + 1;
-			Sleep(1500);
-		}
-
-		if (game.playerOneTurn)
-		{
-			gapFillers(48);
-			cin >> playRow;
-			playRow = playRow - 1;
-			if (graczkol >= 65 && graczkol <= 74)
-			{
-				playColumn = static_cast<int>(graczkol);
-				playColumn = playColumn - 65;
-			}
-			else if (graczkol >= 97 && graczkol <= 106)
-			{
-				playColumn = static_cast<int>(graczkol);
-				playColumn = playColumn - 97;
-			}
-			else
-				playColumn = static_cast<int>(graczkol);
 		}
 
 		system("cls");
@@ -1473,12 +568,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow + 1][playColumn] == 6)
@@ -1490,8 +580,6 @@ void askForInput(Game game) {
 								if (playColumn - 1 + a >= 0 && playColumn - 1 + a <= 9 && playRow - 1 + b >= 0 && playRow - 1 + b <= 9 && game.board1.gameBoard[playRow - 1 + b][playColumn - 1 + a] == -1)
 									game.board1.gameBoard[playRow - 1 + b][playColumn - 1 + a] = 5;
 							}
-
-
 						}
 
 						SetConsoleTextAttribute(hOut, FOREGROUND_GREEN);
@@ -1499,11 +587,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.two1 == false) game.board1.two1 = true;
 						else if (game.board1.two1 == true && game.board1.two2 == false) game.board1.two2 = true;
@@ -1526,11 +610,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.two1 == false) game.board1.two1 = true;
 						else if (game.board1.two1 == true && game.board1.two2 == false) game.board1.two2 = true;
@@ -1552,11 +632,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.two1 == false) game.board1.two1 = true;
 						else if (game.board1.two1 == true && game.board1.two2 == false) game.board1.two2 = true;
@@ -1578,11 +654,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.two1 == false) game.board1.two1 = true;
 						else if (game.board1.two1 == true && game.board1.two2 == false) game.board1.two2 = true;
@@ -1603,12 +675,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow - 1][playColumn] == 6 && game.board1.gameBoard[playRow - 2][playColumn] == 6)
@@ -1629,11 +696,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;
 						else if (game.board1.three1 == true) game.board1.three2 = true;
@@ -1649,12 +712,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow - 1][playColumn] == 6 && game.board1.gameBoard[playRow + 1][playColumn] == 6)
@@ -1673,11 +731,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;
 						else if (game.board1.three1 == true) game.board1.three2 = true;
@@ -1692,12 +746,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow + 1][playColumn] == 6 && game.board1.gameBoard[playRow + 2][playColumn] == 6)
@@ -1716,11 +765,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;
 						else if (game.board1.three1 == true) game.board1.three2 = true;
@@ -1736,12 +781,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow][playColumn + 1] == 6 && game.board1.gameBoard[playRow][playColumn + 2] == 6)
@@ -1760,11 +800,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;
 						else if (game.board1.three1 == true) game.board1.three2 = true;
@@ -1780,12 +816,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow][playColumn - 1] == 6 && game.board1.gameBoard[playRow][playColumn + 1] == 6)
@@ -1804,11 +835,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;
 						else if (game.board1.three1 == true) game.board1.three2 = true;
@@ -1823,12 +850,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (game.board1.gameBoard[playRow][playColumn - 1] == 6 && game.board1.gameBoard[playRow][playColumn - 2] == 6)
@@ -1847,11 +869,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
 							SoundUtils::playSound("sunk");
-						k_trafiony = false;
-						k_wiersz = -1;
-						k_kolumna = -1;
-						k_kierunek = 0;
-						k_sprawdzKierunek = 0;
+						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;
 						else if (game.board1.three1 == true) game.board1.three2 = true;
@@ -1870,12 +888,7 @@ void askForInput(Game game) {
 						cout << "TRAFIONY!";
 						if (game.effects)
 							SoundUtils::playSound("hit");
-						k_trafiony = true;
-						if (k_wiersz == -1 && k_kolumna == -1)
-						{
-							k_wiersz = playRow;
-							k_kolumna = playColumn;
-						}
+						ai.onHit(game, playColumn, playRow);
 						gapFillers(70);
 					}
 					else if (czworka == 4)
@@ -1896,11 +909,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -1920,11 +929,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -1944,11 +949,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -1968,11 +969,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -1992,11 +989,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -2016,11 +1009,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -2040,11 +1029,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}
@@ -2064,11 +1049,7 @@ void askForInput(Game game) {
 							cout << "TRAFIONY, ZATOPIONY!";
 							if (game.effects)
 								SoundUtils::playSound("sunk");
-							k_trafiony = false;
-							k_wiersz = -1;
-							k_kolumna = -1;
-							k_kierunek = 0;
-							k_sprawdzKierunek = 0;
+							ai.resetData(game);
 							gapFillers(65);
 							game.board1.four1 = true;
 						}

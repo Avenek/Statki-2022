@@ -6,7 +6,6 @@
 #include <string>
 #include <ctime>
 #include <fstream>
-#include "AiKnowledge.h"
 
 using namespace std;
 
@@ -35,11 +34,9 @@ public:
 	bool versusPlayer, music, effects;
 	State state;
 	AiMode aiMode;
-	AiKnowledge aiKnowledge;
 	void createGame(GameType);
 	void generateMap(Game);
 	void startGame(Game);
 	friend class Ship;
-	friend class AiKnowledge;
 };
 
