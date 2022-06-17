@@ -1,5 +1,6 @@
 #include "utils/CursorUtils.h"
 #include "utils/FrameUtils.h"
+#include "utils/SoundUtils.h"
 #include "Settings.h"
 #include "Game.h"
 #include <iostream>
@@ -16,7 +17,7 @@ Settings::Settings(int c)
 {
     choose = c;
 }
-void Settings::show(void(*play_music)(string), bool& welcome_screen, bool& music, bool& effects)
+void Settings::show(bool& welcome_screen, bool& music, bool& effects)
 {
 	HANDLE hOut;
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -50,9 +51,9 @@ void Settings::show(void(*play_music)(string), bool& welcome_screen, bool& music
 		else if (choose == 1)
 		{
 			if (music == true)
-				play_music("mute");
+				SoundUtils::playSound("mute");
 			else
-				play_music("game");
+				SoundUtils::playSound("game");
 			music = !music;
 		}
 		else if (choose == 2)

@@ -561,7 +561,7 @@ void MapGenerator::doShowDots(int board[10][10])
 	}
 }
 
-void MapGenerator::chooseGenerationType(Game game, Board board)
+void MapGenerator::chooseGenerationType(Game& game, Board& board)
 {
 	int choose = 0;
 	bool end = false;
@@ -587,7 +587,7 @@ void MapGenerator::chooseGenerationType(Game game, Board board)
 	}
 	switch (choose) {
 	case 0:
-		if (!generateRandomMap(board)) chooseGenerationType(game, board);
+		if (!generateRandomMap(game, board, false)) chooseGenerationType(game, board);
 		break;
 	case 1:
 	default:
@@ -596,7 +596,8 @@ void MapGenerator::chooseGenerationType(Game game, Board board)
 	}
 }
 
-bool MapGenerator::generateRandomMap(Board board)
+
+bool MapGenerator::generateRandomMap(Game &game, Board &board, bool forceSet = false)
 {
 	int ulozenie1 = 1;
 	do
@@ -631,6 +632,10 @@ bool MapGenerator::generateRandomMap(Board board)
 			}
 		}
 		doShowDots(board.gameBoard);
+		if (forceSet) {
+			game.state = START_GAME;
+			break;
+		}
 		int choose = 1;
 		bool end = false;
 		char ch = 171;
@@ -645,7 +650,7 @@ bool MapGenerator::generateRandomMap(Board board)
 		}
 		ulozenie1 = choose;
 		if (ulozenie1 == 3) break;
-		if (ulozenie1 == 2) board.state = START_GAME;
+		if (ulozenie1 == 2) game.state = START_GAME;
 	} while ((ulozenie1 != 2 && ulozenie1 != 0));
 	system("cls");
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -138,6 +138,7 @@
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="utils\CursorUtils.cpp" />
     <ClCompile Include="utils\FrameUtils.cpp" />
+    <ClCompile Include="utils\SoundUtils.cpp" />
     <ClCompile Include="Źródło.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +151,7 @@
     <ClInclude Include="Ship.h" />
     <ClInclude Include="utils\CursorUtils.h" />
     <ClInclude Include="utils\FrameUtils.h" />
+    <ClInclude Include="utils\SoundUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

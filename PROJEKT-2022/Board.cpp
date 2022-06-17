@@ -6,4 +6,9 @@
 #include <ctime>
 #include <fstream>
 #include "Board.h"
+
 using namespace std;
+
+int Board::getPlayerNameLength() {
+	return playerName.length() - (playerName.length() % 2);
+}

@@ -8,6 +8,6 @@ private:
 	void doGenerateRandomMap(int[10][10]);
 	void doShowDots(int[10][10]);
 public:
-	void chooseGenerationType(Game, Board);
-	bool generateRandomMap(Board);
+	void chooseGenerationType(Game&, Board&);
+	bool generateRandomMap(Game&, Board&, bool);
 };
