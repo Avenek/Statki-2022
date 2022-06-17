@@ -13,6 +13,6 @@ class Settings
     int choose;
 public:
     Settings(int c);
-    void show(void(*play_music)(string), bool&, bool&, bool&);
+    void show(bool&, bool&, bool&);
     void load_settings(bool& welcome_screen, bool& music, bool& effects);
 };

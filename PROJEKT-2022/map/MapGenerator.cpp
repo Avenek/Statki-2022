@@ -1,386 +1,521 @@
-#pragma once
 #include "../utils/CursorUtils.h"
 #include "../utils/FrameUtils.h"
 #include "MapGenerator.h"
 #include "../Board.h"
 #include "../Game.h"
-#include "../Ship.h"
 #include <random>
 
 using namespace std;
 
-void MapGenerator::doGenerateRandomMap(Board &board)
-{
-	random_device rd;
-	mt19937 generator(rd());
-	uniform_int_distribution<int> random_line(0, 9);
-	uniform_int_distribution<int> random_column(0, 9);
-	uniform_int_distribution<int> random_direction(0, 3);				// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+random_device rd;
+mt19937 generator(rd());
+uniform_int_distribution<int> wierszL(0, 9);
+uniform_int_distribution<int> kolumnaL(0, 9);
+uniform_int_distribution<int> kierunekL(0, 3);
 
-	int line{}, column{}, direction{};
-	Ship ship4_1(0,0,0,0, false, false);
+void MapGenerator::doGenerateRandomMap(int board[10][10])
+{
 	for (int c = 0; c <= 9; c++)
 	{
 		for (int d = 0; d <= 9; d++)
 		{
-			board.gameBoard[c][d] = {};
-			board.shipBoard[c][d] = {};
+			board[c][d] = 0;
 		}
 	}
-	
-	do {
-		
-		line = random_line(generator);
-		column = random_column(generator);
-		direction = random_direction(generator);
 
-		if (direction == 0 && line - 3 >= 0 && board.gameBoard[line][column] == 0 && board.gameBoard[line - 1][column] == 0 && board.gameBoard[line - 2][column] == 0 && board.gameBoard[line - 3][column] == 0)
-		{
-			ship4_1.load(4, line, column, direction);
-			for (int i = 0; i < 4; i++)
-			{
-				board.gameBoard[line - i][column] = 1;
-				board.shipBoard[line - i][column] = ship4_1;
-			}
+	int wiersz = 0;
+	int kolumna = 0;
+	int kierunek = 0;
 
-			for (int a = 0; a < 3; a++)
-			{
-				for (int b = 0; b < 6; b++)
-				{
-					if (column - 1 + a >= 0 && column - 1 + a <= 9 && line + 1 - b >= 0 && line + 1 - b <= 9 && board.gameBoard[line + 1 - b][column - 1 + a] == 0)
-						board.gameBoard[line + 1 - b][column - 1 + a] = -1;
-				}
-
-
-			}
-		}
-		else if (direction == 1 && line + 3 <= 9 && board.gameBoard[line][column] == 0 && board.gameBoard[line + 1][column] == 0 && board.gameBoard[line + 2][column] == 0 && board.gameBoard[line + 3][column] == 0)
-		{
-			ship4_1.load(4, line, column, direction);
-			for (int i = 0; i < 4; i++)
-			{
-				board.gameBoard[line + i][column] = 1;
-				board.shipBoard[line + i][column] = ship4_1;
-			}
-
-			for (int a = 0; a < 3; a++)
-			{
-				for (int b = 0; b < 6; b++)
-				{
-					if (column - 1 + a >= 0 && column - 1 + a <= 9 && line - 1 + b >= 0 && line - 1 + b <= 9 && board.gameBoard[line - 1 + b][column - 1 + a] == 0)
-						board.gameBoard[line - 1 + b][column - 1 + a] = -1;
-				}
-
-
-			}
-		}
-		else if (direction == 2 && column + 3 <= 9 && board.gameBoard[line][column] == 0 && board.gameBoard[line][column + 1] == 0 && board.gameBoard[line][column + 2] == 0 && board.gameBoard[line][column + 3] == 0)
-		{
-			ship4_1.load(4, line, column, direction);
-			for (int i = 0; i < 4; i++)
-			{
-				board.gameBoard[line][column + i] = 1;
-				board.shipBoard[line][column + i] = ship4_1;
-			}
-
-			for (int a = 0; a < 3; a++)
-			{
-				for (int b = 0; b < 6; b++)
-				{
-					if (line - 1 + a >= 0 && line - 1 + a <= 9 && column - 1 + b >= 0 && column - 1 + b <= 9 && board.gameBoard[line - 1 + a][column - 1 + b] == 0)
-						board.gameBoard[line - 1 + a][column - 1 + b] = -1;
-				}
-
-
-			}
-		}
-		else if (direction == 3 && column - 3 >= 0 && board.gameBoard[line][column] == 0 && board.gameBoard[line][column - 1] == 0 && board.gameBoard[line][column - 2] == 0 && board.gameBoard[line][column - 3] == 0)
-		{
-			ship4_1.load(4, line, column, direction);
-			for (int i = 0; i < 4; i++)
-			{
-				board.gameBoard[line][column - i] = 1;
-				board.shipBoard[line][column - i] = ship4_1;
-			}
-
-			for (int a = 0; a < 3; a++)
-			{
-				for (int b = 0; b < 6; b++)
-				{
-					if (line - 1 + a >= 0 && line - 1 + a <= 9 && column + 1 - b >= 0 && column + 1 - b <= 9 && board.gameBoard[line - 1 + a][column + 1 - b] == 0)
-						board.gameBoard[line - 1 + a][column + 1 - b] = -1;
-				}
-
-
-			}
-		}
-
-	} while (ship4_1.if_onBoard==false);
-
-	Ship ship3_1(0, 0, 0, 0, false, false);
-	Ship ship3_2(0, 0, 0, 0, false, false);
-	bool check = false;
-
-	for (int a = 1; a <=2; a++)
+	do
 	{
-		check = true;
-		do
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+		kierunek = kierunekL(generator);
+
+
+		// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+
+		if (kierunek == 0 && wiersz - 3 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz - 1][kolumna] == 0 && board[wiersz - 2][kolumna] == 0 && board[wiersz - 3][kolumna] == 0)
 		{
-			line = random_line(generator);
-			column = random_column(generator);
-			direction = random_direction(generator);
+			for (int i = 0; i < 4; i++)
+				board[wiersz - i][kolumna] = 4;
 
-			// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
-
-			if (direction == 0 && line - 2 >= 0 && board.gameBoard[line][column] == 0 && board.gameBoard[line - 1][column] == 0 && board.gameBoard[line - 2][column] == 0)
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship3_1.load(3, line, column, direction);
-				else if (a==2) ship3_2.load(3, line, column, direction);
-				for (int i = 0; i < 3; i++)
+				for (int b = 0; b < 6; b++)
 				{
-					board.gameBoard[line - i][column] = 1;
-					if (a == 1) board.shipBoard[line-i][column] = ship3_1;
-					else if (a == 2) board.shipBoard[line-i][column] = ship3_2;
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
 				}
 
-				for (int a = 0; a < 3; a++)
+
+			}
+		}
+		if (kierunek == 1 && wiersz + 3 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz + 1][kolumna] == 0 && board[wiersz + 2][kolumna] == 0 && board[wiersz + 3][kolumna] == 0)
+		{
+			for (int i = 0; i < 4; i++)
+				board[wiersz + i][kolumna] = 4;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 6; b++)
 				{
-					for (int b = 0; b < 5; b++)
-					{
-						if (column - 1 + a >= 0 && column - 1 + a <= 9 && line + 1 - b >= 0 && line + 1 - b <= 9 && board.gameBoard[line + 1 - b][column - 1 + a] == 0)
-							board.gameBoard[line + 1 - b][column - 1 + a] = -1;
-					}
-
-
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz - 1 + b >= 0 && wiersz - 1 + b <= 9 && board[wiersz - 1 + b][kolumna - 1 + a] == 0)
+						board[wiersz - 1 + b][kolumna - 1 + a] = -1;
 				}
 			}
-			else if (direction == 1 && line + 2 <= 9 && board.gameBoard[line][column] == 0 && board.gameBoard[line + 1][column] == 0 && board.gameBoard[line + 2][column] == 0)
+		}
+		if (kierunek == 2 && kolumna + 3 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna + 1] == 0 && board[wiersz][kolumna + 2] == 0 && board[wiersz][kolumna + 3] == 0)
+		{
+			for (int i = 0; i < 4; i++)
+				board[wiersz][kolumna + i] = 4;
+
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship3_1.load(3, line, column, direction);
-				else if (a == 2) ship3_2.load(3, line, column, direction);
-				for (int i = 0; i < 3; i++)
+				for (int b = 0; b < 6; b++)
 				{
-					board.gameBoard[line + i][column] = 1;
-					if (a == 1) board.shipBoard[line + i][column] = ship3_1;
-					else if (a == 2) board.shipBoard[line + i][column] = ship3_2;
-				}
-
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 5; b++)
-					{
-						if (column - 1 + a >= 0 && column - 1 + a <= 9 && line - 1 + b >= 0 && line - 1 + b <= 9 && board.gameBoard[line - 1 + b][column - 1 + a] == 0)
-							board.gameBoard[line - 1 + b][column - 1 + a] = -1;
-					}
-
-
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna - 1 + b >= 0 && kolumna - 1 + b <= 9 && board[wiersz - 1 + a][kolumna - 1 + b] == 0)
+						board[wiersz - 1 + a][kolumna - 1 + b] = -1;
 				}
 			}
-			else if (direction == 2 && column + 2 <= 9 && board.gameBoard[line][column] == 0 && board.gameBoard[line][column + 1] == 0 && board.gameBoard[line][column + 2] == 0)
+		}
+		if (kierunek == 3 && kolumna - 3 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna - 1] == 0 && board[wiersz][kolumna - 2] == 0 && board[wiersz][kolumna - 3] == 0)
+		{
+			for (int i = 0; i < 4; i++)
+				board[wiersz][kolumna - i] = 4;
+
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship3_1.load(3, line, column, direction);
-				else if (a == 2) ship3_2.load(3, line, column, direction);
-				for (int i = 0; i < 3; i++)
+				for (int b = 0; b < 6; b++)
 				{
-					board.gameBoard[line][column + i] = 1;
-					if (a == 1) board.shipBoard[line][column + i] = ship3_1;
-					else if (a == 2) board.shipBoard[line][column + i] = ship3_2;
-				}
-
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 5; b++)
-					{
-						if (line - 1 + a >= 0 && line - 1 + a <= 9 && column - 1 + b >= 0 && column - 1 + b <= 9 && board.gameBoard[line - 1 + a][column - 1 + b] == 0)
-							board.gameBoard[line - 1 + a][column - 1 + b] = -1;
-					}
-
-
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna + 1 - b >= 0 && kolumna + 1 - b <= 9 && board[wiersz - 1 + a][kolumna + 1 - b] == 0)
+						board[wiersz - 1 + a][kolumna + 1 - b] = -1;
 				}
 			}
-			else if (direction == 3 && column - 2 >= 0 && board.gameBoard[line][column] == 0 && board.gameBoard[line][column - 1] == 0 && board.gameBoard[line][column - 2] == 0)
-			{
-				if (a == 1) ship3_1.load(3, line, column, direction);
-				else if (a == 2) ship3_2.load(3, line, column, direction);
-				for (int i = 0; i < 3; i++)
-				{
-					board.gameBoard[line][column - i] = 1;
-					if (a == 1) board.shipBoard[line][column - i] = ship3_1;
-					else if (a == 2) board.shipBoard[line][column - i] = ship3_2;
-				}
+		}
 
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 5; b++)
-					{
-						if (line - 1 + a >= 0 && line - 1 + a <= 9 && column + 1 - b >= 0 && column + 1 - b <= 9 && board.gameBoard[line - 1 + a][column + 1 - b] == 0)
-							board.gameBoard[line - 1 + a][column + 1 - b] = -1;
-					}
+	} while (board[wiersz][kolumna] != 4);
 
-
-				}
-			}
-			if (a == 1 && ship3_1.if_onBoard == true) check = false;
-			else if (a == 2 && ship3_2.if_onBoard == true) check = false;
-		} while (check);
-	}
-	Ship ship2_1(0, 0, 0, 0, false, false);
-	Ship ship2_2(0, 0, 0, 0, false, false);
-	Ship ship2_3(0, 0, 0, 0, false, false);
-	for (int a = 1; a <= 3; a++)
+	do
 	{
-		check = true;
-		do
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+		kierunek = kierunekL(generator);
+
+		// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+
+		if (kierunek == 0 && wiersz - 2 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz - 1][kolumna] == 0 && board[wiersz - 2][kolumna] == 0)
 		{
-			line = random_line(generator);
-			column = random_column(generator);
-			direction = random_direction(generator);
+			for (int i = 0; i < 3; i++)
+				board[wiersz - i][kolumna] = 3;
 
-			// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
-
-			if (direction == 0 && line - 1 >= 0 && board.gameBoard[line][column] == 0 && board.gameBoard[line - 1][column] == 0)
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship2_1.load(2, line, column, direction);
-				else if (a == 2) ship2_2.load(2, line, column, direction);
-				else if (a == 3) ship2_3.load(2, line, column, direction);
-				for (int i = 0; i < 2; i++)
+				for (int b = 0; b < 5; b++)
 				{
-					board.gameBoard[line - i][column] = 1;
-					if (a == 1) board.shipBoard[line-i][column] = ship2_1;
-					else if (a == 2) board.shipBoard[line-i][column] = ship2_2;
-					else if (a == 3) board.shipBoard[line-i][column] = ship2_3;
-				}
-
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 4; b++)
-					{
-						if (column - 1 + a >= 0 && column - 1 + a <= 9 && line + 1 - b >= 0 && line + 1 - b <= 9 && board.gameBoard[line + 1 - b][column - 1 + a] == 0)
-							board.gameBoard[line + 1 - b][column - 1 + a] = -1;
-					}
-
-
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
 				}
 			}
-			else if (direction == 1 && line + 1 <= 9 && board.gameBoard[line][column] == 0 && board.gameBoard[line + 1][column] == 0)
+		}
+		if (kierunek == 1 && wiersz + 2 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz + 1][kolumna] == 0 && board[wiersz + 2][kolumna] == 0)
+		{
+			for (int i = 0; i < 3; i++)
+				board[wiersz + i][kolumna] = 3;
+
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship2_1.load(2, line, column, direction);
-				else if (a == 2) ship2_2.load(2, line, column, direction);
-				else if (a == 3) ship2_3.load(2, line, column, direction);
-				for (int i = 0; i < 2; i++)
+				for (int b = 0; b < 5; b++)
 				{
-					board.gameBoard[line + i][column] = 1;
-					if (a == 1) board.shipBoard[line + i][column] = ship2_1;
-					else if (a == 2) board.shipBoard[line + i][column] = ship2_2;
-					else if (a == 3) board.shipBoard[line + i][column] = ship2_3;
-				}
-
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 4; b++)
-					{
-						if (column - 1 + a >= 0 && column - 1 + a <= 9 && line - 1 + b >= 0 && line - 1 + b <= 9 && board.gameBoard[line - 1 + b][column - 1 + a] == 0)
-							board.gameBoard[line - 1 + b][column - 1 + a] = -1;
-					}
-
-
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz - 1 + b >= 0 && wiersz - 1 + b <= 9 && board[wiersz - 1 + b][kolumna - 1 + a] == 0)
+						board[wiersz - 1 + b][kolumna - 1 + a] = -1;
 				}
 			}
-			if (direction == 2 && column + 1 <= 9 && board.gameBoard[line][column] == 0 && board.gameBoard[line][column + 1] == 0)
+		}
+		if (kierunek == 2 && kolumna + 2 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna + 1] == 0 && board[wiersz][kolumna + 2] == 0)
+		{
+			for (int i = 0; i < 3; i++)
+				board[wiersz][kolumna + i] = 3;
+
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship2_1.load(2, line, column, direction);
-				else if (a == 2) ship2_2.load(2, line, column, direction);
-				else if (a == 3) ship2_3.load(2, line, column, direction);
-				for (int i = 0; i < 2; i++)
+				for (int b = 0; b < 5; b++)
 				{
-					board.gameBoard[line][column + i] = 1;
-					if (a == 1) board.shipBoard[line][column + i] = ship2_1;
-					else if (a == 2) board.shipBoard[line][column + i] = ship2_2;
-					else if (a == 3) board.shipBoard[line][column + i] = ship2_3;
-				}
-
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 4; b++)
-					{
-						if (line - 1 + a >= 0 && line - 1 + a <= 9 && column - 1 + b >= 0 && column - 1 + b <= 9 && board.gameBoard[line - 1 + a][column - 1 + b] == 0)
-							board.gameBoard[line - 1 + a][column - 1 + b] = -1;
-					}
-
-
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna - 1 + b >= 0 && kolumna - 1 + b <= 9 && board[wiersz - 1 + a][kolumna - 1 + b] == 0)
+						board[wiersz - 1 + a][kolumna - 1 + b] = -1;
 				}
 			}
-			if (direction == 3 && column - 1 >= 0 && board.gameBoard[line][column] == 0 && board.gameBoard[line][column - 1] == 0)
+		}
+		if (kierunek == 3 && kolumna - 2 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna - 1] == 0 && board[wiersz][kolumna - 2] == 0)
+		{
+			for (int i = 0; i < 3; i++)
+				board[wiersz][kolumna - i] = 3;
+
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship2_1.load(2, line, column, direction);
-				else if (a == 2) ship2_2.load(2, line, column, direction);
-				else if (a == 3) ship2_3.load(2, line, column, direction);
-				for (int i = 0; i < 2; i++)
+				for (int b = 0; b < 5; b++)
 				{
-					board.gameBoard[line][column - i] = 1;
-					if (a == 1) board.shipBoard[line][column - i] = ship2_1;
-					else if (a == 2) board.shipBoard[line][column - i] = ship2_2;
-					else if (a == 3) board.shipBoard[line][column - i] = ship2_3;
-				}
-
-				for (int a = 0; a < 3; a++)
-				{
-					for (int b = 0; b < 4; b++)
-					{
-						if (line - 1 + a >= 0 && line - 1 + a <= 9 && column + 1 - b >= 0 && column + 1 - b <= 9 && board.gameBoard[line - 1 + a][column + 1 - b] == 0)
-							board.gameBoard[line - 1 + a][column + 1 - b] = -1;
-					}
-
-
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna + 1 - b >= 0 && kolumna + 1 - b <= 9 && board[wiersz - 1 + a][kolumna + 1 - b] == 0)
+						board[wiersz - 1 + a][kolumna + 1 - b] = -1;
 				}
 			}
-			if (a == 1 && ship2_1.if_onBoard == true) check = false;
-			else if (a == 2 && ship2_2.if_onBoard == true) check = false;
-			else if (a == 3 && ship2_3.if_onBoard == true) check = false;
-		} while (check);
-	}
-	Ship ship1_1(0, 0, 0, 0, false, false);
-	Ship ship1_2(0, 0, 0, 0, false, false);
-	Ship ship1_3(0, 0, 0, 0, false, false);
-	Ship ship1_4(0, 0, 0, 0, false, false);
-	for (int a = 1; a <= 4; a++)
+		}
+
+	} while (board[wiersz][kolumna] != 3);
+
+	do
 	{
-		check = true;
-		do
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+		kierunek = kierunekL(generator);
+
+		// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+
+		if (kierunek == 0 && wiersz - 2 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz - 1][kolumna] == 0 && board[wiersz - 2][kolumna] == 0)
 		{
-			line = random_line(generator);
-			column = random_column(generator);
-			direction = 0;
+			for (int i = 0; i < 3; i++)
+				board[wiersz - i][kolumna] = 3;
 
-			if (board.gameBoard[line][column] == 0)
+			for (int a = 0; a < 3; a++)
 			{
-				if (a == 1) ship1_1.load(1, line, column, direction);
-				else if (a == 2) ship1_2.load(1, line, column, direction);
-				else if (a == 3) ship1_3.load(1, line, column, direction);
-				else if (a == 4) ship1_4.load(1, line, column, direction);
-				board.gameBoard[line][column] = 1;
-				if (a == 1) board.shipBoard[line][column] = ship1_1;
-				else if (a == 2) board.shipBoard[line][column] = ship1_2;
-				else if (a == 3) board.shipBoard[line][column] = ship1_3;
-				else if (a == 4) board.shipBoard[line][column] = ship1_4;
-
-				for (int a = 0; a < 3; a++)
+				for (int b = 0; b < 5; b++)
 				{
-					for (int b = 0; b < 3; b++)
-					{
-						if (column - 1 + a >= 0 && column - 1 + a <= 9 && line + 1 - b >= 0 && line + 1 - b <= 9 && board.gameBoard[line + 1 - b][column - 1 + a] == 0)
-							board.gameBoard[line + 1 - b][column - 1 + a] = -1;
-					}
-
-
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
 				}
 			}
-			if (a == 1 && ship1_1.if_onBoard == true) check = false;
-			else if (a == 2 && ship1_2.if_onBoard == true) check = false;
-			else if (a == 3 && ship1_3.if_onBoard == true) check = false;
-			else if (a == 4 && ship1_4.if_onBoard == true) check = false;
-		} while (check);
-	}
+		}
+		if (kierunek == 1 && wiersz + 2 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz + 1][kolumna] == 0 && board[wiersz + 2][kolumna] == 0)
+		{
+			for (int i = 0; i < 3; i++)
+				board[wiersz + i][kolumna] = 3;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 5; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz - 1 + b >= 0 && wiersz - 1 + b <= 9 && board[wiersz - 1 + b][kolumna - 1 + a] == 0)
+						board[wiersz - 1 + b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 2 && kolumna + 2 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna + 1] == 0 && board[wiersz][kolumna + 2] == 0)
+		{
+			for (int i = 0; i < 3; i++)
+				board[wiersz][kolumna + i] = 3;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 5; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna - 1 + b >= 0 && kolumna - 1 + b <= 9 && board[wiersz - 1 + a][kolumna - 1 + b] == 0)
+						board[wiersz - 1 + a][kolumna - 1 + b] = -1;
+				}
+			}
+		}
+		if (kierunek == 3 && kolumna - 2 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna - 1] == 0 && board[wiersz][kolumna - 2] == 0)
+		{
+			for (int i = 0; i < 3; i++)
+				board[wiersz][kolumna - i] = 3;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 5; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna + 1 - b >= 0 && kolumna + 1 - b <= 9 && board[wiersz - 1 + a][kolumna + 1 - b] == 0)
+						board[wiersz - 1 + a][kolumna + 1 - b] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 3);
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+		kierunek = kierunekL(generator);
+
+		// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+
+		if (kierunek == 0 && wiersz - 1 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz - 1][kolumna] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz - i][kolumna] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 1 && wiersz + 1 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz + 1][kolumna] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz + i][kolumna] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz - 1 + b >= 0 && wiersz - 1 + b <= 9 && board[wiersz - 1 + b][kolumna - 1 + a] == 0)
+						board[wiersz - 1 + b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 2 && kolumna + 1 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna + 1] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz][kolumna + i] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna - 1 + b >= 0 && kolumna - 1 + b <= 9 && board[wiersz - 1 + a][kolumna - 1 + b] == 0)
+						board[wiersz - 1 + a][kolumna - 1 + b] = -1;
+				}
+			}
+		}
+		if (kierunek == 3 && kolumna - 1 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna - 1] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz][kolumna - i] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna + 1 - b >= 0 && kolumna + 1 - b <= 9 && board[wiersz - 1 + a][kolumna + 1 - b] == 0)
+						board[wiersz - 1 + a][kolumna + 1 - b] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 2);
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+		kierunek = kierunekL(generator);
+
+		// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+
+		if (kierunek == 0 && wiersz - 1 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz - 1][kolumna] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz - i][kolumna] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 1 && wiersz + 1 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz + 1][kolumna] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz + i][kolumna] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz - 1 + b >= 0 && wiersz - 1 + b <= 9 && board[wiersz - 1 + b][kolumna - 1 + a] == 0)
+						board[wiersz - 1 + b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 2 && kolumna + 1 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna + 1] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz][kolumna + i] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna - 1 + b >= 0 && kolumna - 1 + b <= 9 && board[wiersz - 1 + a][kolumna - 1 + b] == 0)
+						board[wiersz - 1 + a][kolumna - 1 + b] = -1;
+				}
+			}
+		}
+		if (kierunek == 3 && kolumna - 1 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna - 1] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz][kolumna - i] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna + 1 - b >= 0 && kolumna + 1 - b <= 9 && board[wiersz - 1 + a][kolumna + 1 - b] == 0)
+						board[wiersz - 1 + a][kolumna + 1 - b] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 2);
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+		kierunek = kierunekL(generator);
+
+		// 0 - góra, 1 - dó³, 2 - prawo, 3 - lewo
+
+		if (kierunek == 0 && wiersz - 1 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz - 1][kolumna] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz - i][kolumna] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 1 && wiersz + 1 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz + 1][kolumna] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz + i][kolumna] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz - 1 + b >= 0 && wiersz - 1 + b <= 9 && board[wiersz - 1 + b][kolumna - 1 + a] == 0)
+						board[wiersz - 1 + b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+		if (kierunek == 2 && kolumna + 1 <= 9 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna + 1] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz][kolumna + i] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna - 1 + b >= 0 && kolumna - 1 + b <= 9 && board[wiersz - 1 + a][kolumna - 1 + b] == 0)
+						board[wiersz - 1 + a][kolumna - 1 + b] = -1;
+				}
+			}
+		}
+		if (kierunek == 3 && kolumna - 1 >= 0 && board[wiersz][kolumna] == 0 && board[wiersz][kolumna - 1] == 0)
+		{
+			for (int i = 0; i < 2; i++)
+				board[wiersz][kolumna - i] = 2;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 4; b++)
+				{
+					if (wiersz - 1 + a >= 0 && wiersz - 1 + a <= 9 && kolumna + 1 - b >= 0 && kolumna + 1 - b <= 9 && board[wiersz - 1 + a][kolumna + 1 - b] == 0)
+						board[wiersz - 1 + a][kolumna + 1 - b] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 2);
+
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+
+		if (board[wiersz][kolumna] == 0)
+		{
+			board[wiersz][kolumna] = 1;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 3; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 1);
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+
+		if (board[wiersz][kolumna] == 0)
+		{
+			board[wiersz][kolumna] = 1;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 3; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 1);
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+
+		if (board[wiersz][kolumna] == 0)
+		{
+			board[wiersz][kolumna] = 1;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 3; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 1);
+
+	do
+	{
+		wiersz = wierszL(generator);
+		kolumna = kolumnaL(generator);
+
+		if (board[wiersz][kolumna] == 0)
+		{
+			board[wiersz][kolumna] = 1;
+
+			for (int a = 0; a < 3; a++)
+			{
+				for (int b = 0; b < 3; b++)
+				{
+					if (kolumna - 1 + a >= 0 && kolumna - 1 + a <= 9 && wiersz + 1 - b >= 0 && wiersz + 1 - b <= 9 && board[wiersz + 1 - b][kolumna - 1 + a] == 0)
+						board[wiersz + 1 - b][kolumna - 1 + a] = -1;
+				}
+			}
+		}
+
+	} while (board[wiersz][kolumna] != 1);
 }
 
 void MapGenerator::doShowDots(int board[10][10])
@@ -426,7 +561,7 @@ void MapGenerator::doShowDots(int board[10][10])
 	}
 }
 
-void MapGenerator::chooseGenerationType(Game game, Board board)
+void MapGenerator::chooseGenerationType(Game& game, Board& board)
 {
 	int choose = 0;
 	bool end = false;
@@ -452,7 +587,7 @@ void MapGenerator::chooseGenerationType(Game game, Board board)
 	}
 	switch (choose) {
 	case 0:
-		if (!generateRandomMap(board)) chooseGenerationType(game, board);
+		if (!generateRandomMap(game, board, false)) chooseGenerationType(game, board);
 		break;
 	case 1:
 	default:
@@ -461,19 +596,49 @@ void MapGenerator::chooseGenerationType(Game game, Board board)
 	}
 }
 
-bool MapGenerator::generateRandomMap(Board &board)
+
+bool MapGenerator::generateRandomMap(Game &game, Board &board, bool forceSet = false)
 {
 	int ulozenie1 = 1;
 	do
 	{
 		if (ulozenie1 == 1)
 		{
-			doGenerateRandomMap(board);
+			doGenerateRandomMap(board.gameBoard);
+			bool check = true;
+
+			while (check == true)
+			{
+				int sprawdzam[4] = { 0, 0, 0, 0 };
+				for (int p = 0; p <= 9; p++)
+				{
+					for (int q = 0; q <= 9; q++)
+					{
+						if (board.gameBoard[p][q] == 1)                          // Losowanie planszszy a nastêpnie sprawdzenie,
+							sprawdzam[0] += 1;                           // czy jest poprawnie ulozona, poprzez policzenie ilosci statkow.
+						else if (board.gameBoard[p][q] == 2)
+							sprawdzam[1] += 1;
+						else if (board.gameBoard[p][q] == 3)
+							sprawdzam[2] += 1;
+						else if (board.gameBoard[p][q] == 4)
+							sprawdzam[3] += 1;
+					}
+				}
+
+				if (sprawdzam[0] == 4 && sprawdzam[1] == 6 && sprawdzam[2] == 6 && sprawdzam[3] == 4)
+					check = false;
+				else
+					doGenerateRandomMap(board.gameBoard);
+			}
 		}
 		doShowDots(board.gameBoard);
+		if (forceSet) {
+			game.state = START_GAME;
+			break;
+		}
 		int choose = 1;
 		bool end = false;
-		unsigned char ch = 171;
+		char ch = 171;
 		while (end == false)
 		{
 			CursorUtils::setCursor(1, 1);
@@ -485,7 +650,7 @@ bool MapGenerator::generateRandomMap(Board &board)
 		}
 		ulozenie1 = choose;
 		if (ulozenie1 == 3) break;
-		if (ulozenie1 == 2) board.state = START_GAME;
+		if (ulozenie1 == 2) game.state = START_GAME;
 	} while ((ulozenie1 != 2 && ulozenie1 != 0));
 	system("cls");
 
