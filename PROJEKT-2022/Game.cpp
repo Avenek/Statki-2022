@@ -552,7 +552,7 @@ void askForInput(Game game) {
 					gapFillers(11);
 					cout << "TRAFIONY, ZATOPIONY!";
 					if (game.effects)
-						SoundUtils::playSound("hit");
+						SoundUtils::playSound("sunk");
 					gapFillers(65);
 
 				}
@@ -695,7 +695,7 @@ void askForInput(Game game) {
 						gapFillers(11);
 						cout << "TRAFIONY, ZATOPIONY!";
 						if (game.effects)
-							SoundUtils::playSound("hit");
+							SoundUtils::playSound("sunk");
 						ai.resetData(game);
 						gapFillers(65);
 						if (game.board1.three1 == false) game.board1.three1 = true;

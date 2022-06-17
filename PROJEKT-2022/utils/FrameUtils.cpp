@@ -7,7 +7,8 @@
 
 using namespace std;
 
-void FrameUtils::createFrame(string text, bool color = false, int n = 0) {
+void FrameUtils::createFrame(string text, bool color = false, int n = 0) 
+{
 	createFrame(text, color, n, 0, 0);
 }
 
