@@ -25,7 +25,7 @@ void Menu::info()
     while (end == false)
     {
         CursorUtils::setCursor(40, 1);                                               // Informacje o autorze
-        cout << "Autorami projektu s¹ Jakub Machnik oraz Denis Œmietana.";
+        cout << "Autorami projektu sa Jakub Machnik oraz Denis Smietana.";
         CursorUtils::setCursor(40, 2);
         cout << "Kontakt: j.machnik2002@gmail.com";
         CursorUtils::setCursor(40, 3);

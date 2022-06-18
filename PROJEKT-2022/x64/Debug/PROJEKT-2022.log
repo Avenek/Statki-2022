@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 ﻿  Menu.cpp
   LINK : nie znaleziono elementu C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\x64\Debug\PROJEKT-2022.exe ani nie został on skompilowany podczas ostatniego konsolidowania przyrostowego; zostanie wykonana pełna konsolidacja
+=======
+﻿  MapGenerator.cpp
+C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\PROJEKT-2022\map\MapGenerator.cpp(3157): warning C4715: "MapGenerator::generateHandMap”: niewszystkie ścieżki kodu zwracają wartość
+>>>>>>> 45db9760155af2fc897c4cffa2e324c25e3416d4
   PROJEKT-2022.vcxproj -> C:\Users\Jakub\OneDrive\Desktop\Programowanie\PROJEKT-2022\x64\Debug\PROJEKT-2022.exe
